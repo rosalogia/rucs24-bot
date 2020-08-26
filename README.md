@@ -1,4 +1,4 @@
-# rucs24-bot
+# RUCS24-bot
 
 A discord bot for the Rutgers Class of 2024 Computer Science server
 
