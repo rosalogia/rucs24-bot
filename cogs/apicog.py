@@ -18,9 +18,10 @@ class ApiCog(commands.Cog):
             #I load the text from requests call into a list called open_sections
             #open_sections now contains indexes of all open sections
             open_sections = json.loads(requests.get(open_sections_url).text)
-        except:
+        except Exception as e:
             #If something went wrong, output API error and exit function
             await ctx.send("API Error, sorry!")
+            print(e)
             return
         
         #Check if index entered is in open sections, output the proper statement
