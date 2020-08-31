@@ -5,6 +5,11 @@ import json
 class ApiCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command()
+    async def hi(self, ctx):
+        """Says hi"""
+        return
     
     @commands.command()
     async def open(self, ctx, index):
