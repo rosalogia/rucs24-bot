@@ -1,14 +1,17 @@
 from discord.ext import commands
 
-#Displays the board nicely using f-strings and accessing the indices
 async def display_board(ctx, board):
+    """Displays the board nicely using f-strings and accessing the indices"""
+
     await ctx.send(f'```py\n {board[0]} | {board[1]} | {board[2]}\n'
     + f'-----------\n {board[3]} | {board[4]} | {board[5]}\n'
     + f'-----------\n {board[6]} | {board[7]} | {board[8]}```')
 
 
-#Checks if the inputted player has won
+
 def check_win(player, board):
+    """Checks if the inputted player has won"""
+
     #These are all the winning lines/combinations
     lines = [(0, 1, 2), (3, 4, 5), (6, 7, 8), 
             (0, 3, 6), (1, 4, 7), (2, 5, 8),
@@ -23,22 +26,22 @@ def check_win(player, board):
     return False
 
 
-#Simply makes a move given a player and their move
 def make_move(player, space, board):
+    """Simply makes a move given a player and their move"""
     
     #Convert space to int, and decrement for 0 based indexing, set to player
     board[int(space)-1] = player
 
 
-#Resets a move (will use for recursive backtracking)
 def remove_move(space, board):
+    """Resets a move (will use for recursive backtracking)"""
 
     #Set that board space back to its number
     board[int(space)-1] = space
 
 
-#Returns a list of all valid moves in the position
 def valid_moves(board):
+    """Returns a list of all valid moves in the position"""
     moves = []
 
     #Go through each space, if it's not X or O, append it
@@ -50,25 +53,26 @@ def valid_moves(board):
     return moves
 
 
-#Checks if there's a draw on the board
 def check_draw(board):
+    """Checks if there's a draw on the board"""
 
     #If no valid moves, true, otherwise false
     return len(valid_moves(board)) == 0
 
 
-#Recursive backtracking to score a move from the computer's perspective
-#Moves are scored 1 for definitely winning, 0 for can be drawn, and -1 for can be lost
 def compute_move(player, move, board):
+    """Recursive backtracking to score a move from the computer's perspective"""
 
-    #If X won, return -1 or loss, and if computer won, return 1 or win
+    #Moves are scored 1 for definitely winning, 0 for can be drawn, and -1 for can be lost
+    
+    #Make the move inputted
+    make_move(player, move, board)
+
+    #If X won, return -1 or loss, and if computer won, return 1 or win, draw is 0
     if check_win('X', board):
         return -1
     if check_win('O', board):
         return 1
-    
-    #Make the move inputted, and if it's a draw now return 0
-    make_move(player, move, board)
     if check_draw(board):
         return 0
 
@@ -117,13 +121,17 @@ class TicTacToeCog(commands.Cog):
     async def tictactoe(self, ctx):
         """Plays a game of tic tac toe with the user (it's unbeatable)"""
 
+        def check(m):
+            """Quick check to make sure only the person in the game and channel can respond"""
+            return m.channel == ctx.channel and m.author == ctx.author
+
         #Board is ['1', '2'... '9'] at first, counter's parity is used to determine whose move it is
         board = [str(x) for x in range(1, 10)]
         counter = 1
 
         #Ask player if they want to go first, take in response
         await ctx.send("Do you want to go first?")
-        msg = await self.bot.wait_for('message')
+        msg = await self.bot.wait_for('message', check=check)
 
         #If they say no, set counter to 0 so computer can go first, otherwise show the player the initial board
         if (msg.content.lower() == 'no'):
@@ -146,7 +154,7 @@ class TicTacToeCog(commands.Cog):
                 #Keep going till they enter a valid move
                 while player_move not in valid:
                     await ctx.send('Please enter a valid move')
-                    msg = await self.bot.wait_for('message')
+                    msg = await self.bot.wait_for('message', check=check)
                     player_move = msg.content
                 
                 #Make their move
