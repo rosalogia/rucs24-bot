@@ -24,31 +24,7 @@ class RoleCog(commands.Cog):
         self._selector_channel_id = self._roles_config['selectorChannel']
         self._listeners = self._roles_config['listeners']
 
-
-    @commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload):
-        selector_channel = self.bot.get_channel(self._selector_channel_id)
-        if selector_channel is None:
-            print(f"Error: No valid selector channel was specified.") 
-            return
-        
-        message = await selector_channel.fetch_message(payload.message_id)
-        guild = selector_channel.guild
-        member = payload.member
-        
-        valid_emoji_lists = map(lambda listener: listener.keys(), self._listeners.values())
-        valid_emojis = [item for sublist in valid_emoji_lists for item in sublist]
-        
-        if str(payload.emoji) in valid_emojis:
-            corresponding_role = guild.get_role(self._listeners[str(message.id)][str(payload.emoji)])
-            if corresponding_role not in member.roles:
-                await member.add_roles(corresponding_role)
-        else:
-            await message.remove_reaction(payload.emoji, member)
-        return
-
-    @commands.Cog.listener()
-    async def on_raw_reaction_remove(self, payload):
+    async def add_remove_role(self, payload, add): # add is a boolean denoting whether or not this is an add or removal
         selector_channel = self.bot.get_channel(self._selector_channel_id)
         if selector_channel is None:
             print(f"Error: No valid selector channel was specified.") 
@@ -57,16 +33,28 @@ class RoleCog(commands.Cog):
         message = await selector_channel.fetch_message(payload.message_id)
         guild = selector_channel.guild
         member = guild.get_member(payload.user_id)
-       
-        # Creating a list of lists of valid emojis, then flattening it to create a single-dimensional list
+        
         valid_emoji_lists = map(lambda listener: listener.keys(), self._listeners.values())
         valid_emojis = [item for sublist in valid_emoji_lists for item in sublist]
         
         if str(payload.emoji) in valid_emojis:
             corresponding_role = guild.get_role(self._listeners[str(message.id)][str(payload.emoji)])
-            if corresponding_role in member.roles:
+            if corresponding_role not in member.roles and add:
+                await member.add_roles(corresponding_role)
+            elif corresponding_role in member.roles and not add:
                 await member.remove_roles(corresponding_role)
+        elif add:
+            await message.remove_reaction(payload.emoji, member)
         return
+
+
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(self, payload):
+        await self.add_remove_role(payload, True)
+
+    @commands.Cog.listener()
+    async def on_raw_reaction_remove(self, payload):
+        await self.add_remove_role(payload, False)
 
 def setup(bot):
     bot.add_cog(RoleCog(bot))
