@@ -54,7 +54,7 @@ def valid_moves(board):
 def check_draw(board):
 
     #If no valid moves, true, otherwise false
-    return len(valid_moves(board)) == 0:
+    return len(valid_moves(board)) == 0
 
 
 #Recursive backtracking to score a move from the computer's perspective
