@@ -1,3 +1,16 @@
 {
-    "botToken" : "TOKEN GOES HERE"
+    "botToken" : "TOKEN GOES HERE",
+    "roles"     :
+    {
+        "selectorChannel"   :   channel_id,
+        "listeners"         :
+        {
+            "pronoun_role_selector_message_id" :
+            {
+                "🚺"    :   she_her_role_id,
+                "🚹"    :   he_him_role_id,
+                "🕴️"    :   they_them_role_id
+            }
+        }
+    }
 }
