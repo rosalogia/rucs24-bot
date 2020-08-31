@@ -6,7 +6,7 @@ from discord.ext import commands
 bot = commands.Bot(command_prefix='!', help_command=None)
 
 #Load extensions from cogs folder
-bot.load_extension("cogs.testcog")
+bot.load_extension("cogs.corecog")
 bot.load_extension("cogs.apicog")
 bot.load_extension("cogs.tictactoecog")
 

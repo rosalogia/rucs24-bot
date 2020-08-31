@@ -1,7 +1,8 @@
 import discord
 from discord.ext import commands
+import os
 
-class TestCog(commands.Cog):
+class CoreCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
@@ -22,15 +23,19 @@ class TestCog(commands.Cog):
     @commands.command()
     async def help(self, ctx):
         """Displays information about all the commands in the bot"""
-        #Create an embed with information on each command
+        
+        #Create the embed, set up the title and description, as well as scarlet red color
         embed = discord.Embed(title="Help", description="RUCS24 Commands", color=0xff0000)
-        embed.add_field(name="!echo", value="Params: Any Phrase\nDescription: Repeats your phrase word for word", inline=False)
-        embed.add_field(name="!open", value="Params: Section Index\nDescription: Tells you whether a given course section is open or closed currently", inline=False)
-        embed.add_field(name="!tictactoe", value="Params: None\nDescription: Starts a game of tictactoe with the player", inline=False)
-
-        #Send the embed
+        
+        #Go through each command, access its name and docstring, add to embed
+        for func in self.bot.walk_commands():
+            embed.add_field(name='!'+func.name, value=func.help, inline=False)
+        
+        #Finally, send the embed
         await ctx.send(embed=embed)
 
 
+
+
 def setup(bot):
-    bot.add_cog(TestCog(bot))
+    bot.add_cog(CoreCog(bot))
