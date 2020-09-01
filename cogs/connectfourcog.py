@@ -267,12 +267,33 @@ class ConnectFourCog(commands.Cog):
         #Currently set to human
         counter = 0
 
+        #Difficulty is 0 for easy, 1 for medium, 2 for hard
+        difficulty = 1
+
+        #Keeps track in case player wants to go back in training
+        previous_best_move = ''
+        previous_player_move = ''
+        
+        #Let the user select their difficulty
+        await ctx.send("Easy, Medium, or Hard?")
+        msg = await self.bot.wait_for('message', check=check)
+
+        if (msg.content.lower() == 'easy'):
+            difficulty = 0
+        elif (msg.content.lower() == 'hard'):
+            difficulty = 2
+
+        #Let the user decide if they want training mode
+        await ctx.send("Do you want to use training mode?")
+        msg = await self.bot.wait_for('message', check=check)
+        training = (msg.content.lower() == 'yes')
+
         #Ask the user if they want to go first and retrieve their message
         await ctx.send("Do you want to go first?")
         msg = await self.bot.wait_for('message', check=check)
 
         #If they say no, update the counter so the computer goes first
-        if (msg.content.lower() == 'no'):
+        if msg.content.lower() == 'no':
             counter = 1
         
         #Otherwise, show them the board for their move
@@ -297,13 +318,46 @@ class ConnectFourCog(commands.Cog):
                         await ctx.send('Computer wins by resignation!')
                         return
 
-                    #Prompt them for a valid move and store it
-                    await ctx.send('Please enter a valid move or q to quit')
-                    msg = await self.bot.wait_for('message', check=check)
-                    player_move = msg.content
+                    #If they're in training mode, give options to go back and evaluate
+                    if training:
+
+                        #Decrements counter by 2, removes last 2 moves, displays new board
+                        if player_move == 'b':
+                            counter -= 2
+                            remove_move(previous_best_move, board)
+                            remove_move(previous_player_move, board)
+
+                            await display_board(ctx, board)
+                            break
+                        
+                        #Evaluates each move at a depth of 3 from the player's side and outputs
+                        if player_move == 'e':
+                            eval_str = ''
+                            for move in valid:
+                                eval_str += move + ': ' + str(-compute_move('X', move, 0, 3, board)) + '\n'
+                                remove_move(move, board)
+                            
+                            await ctx.send(f'These only go to depth 3. They are not a perfect eval for sure.\n{eval_str}')
+            
+                        #Gives all the options for training mode
+                        await ctx.send('Please enter a valid move, q to quit, b to take back your move, or e to see evaluations')
+                        msg = await self.bot.wait_for('message', check=check)
+                        player_move = msg.content
+                    
+                    #If not in training mode, only display those options
+                    else:
+                        #Prompt them for a valid move and store it
+                        await ctx.send('Please enter a valid move or q to quit')
+                        msg = await self.bot.wait_for('message', check=check)
+                        player_move = msg.content
                 
+                #If they went back, restart the loop
+                if player_move == 'b':
+                    continue
+
                 #Make the player move
                 make_move('X', player_move, board)
+                previous_player_move = player_move
             
             #If it's the computer's move
             else:
@@ -313,8 +367,8 @@ class ConnectFourCog(commands.Cog):
 
                 #Go through each valid move
                 for move in valid:
-                    #I compute the move, and the depth goes up slowly from 2 to 5 as the game progresses and the search tree is smaller
-                    score = compute_move('O', move, 0, 2+(counter//8), board)
+                    #I compute the move, with depth equal to difficulty
+                    score = compute_move('O', move, 0, difficulty, board)
 
                     #I can remove the move now
                     remove_move(move, board)
@@ -329,11 +383,31 @@ class ConnectFourCog(commands.Cog):
                 await display_board(ctx, board)
                 await ctx.send('Computer chose ' + best_move)
 
+                #If training, evaluate the player's heuristic after computer move
+                if training:
+                    #Set previous best move for later, set player_score to really low value
+                    previous_best_move = best_move
+                    player_score = -2000
+
+                    #Evaluate each move, keep the max eval
+                    for move in valid:
+                        player_score = max(player_score, -1*compute_move('X', move, 0, 3, board))
+                        remove_move(move, board)
+
+                    #Output the relative heuristics
+                    if player_score > 0:
+                        await ctx.send(f'You have an advantage of {player_score} heuristic points!')
+                    elif player_score < 0:
+                        await ctx.send(f'The computer has an advantage of {-player_score} heuristic points!')
+                    else:
+                        await ctx.send(f'You and the computer are even on heuristic points!')
+
             #Check for wins or draw and exit if there are any
             if check_win('O', board):
                 await ctx.send('Sorry, you lost!')
                 return
             elif check_win('X', board):
+                await display_board(ctx, board)
                 await ctx.send('You beat this thing? Thats insaneeeee')
                 break
             elif check_draw(board):
