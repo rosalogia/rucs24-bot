@@ -49,54 +49,63 @@ class ApiCog(commands.Cog):
 
     @commands.command()
     async def lookup(self, ctx, *args):
+        """Takes in subject name and allows you to look up courses and sections in that subject"""
+
+        #Store their lookup string, store list of subject strings
         lookup_string = ' '.join(args)
         subject_options = [x['description'] for x in subject_list]
         subject_match = (0, '')
 
+        #Go through all subject options and find the best fuzzy search match to lookup string
         for subject in subject_options:
             ratio = fuzz.token_set_ratio(lookup_string, subject)
             if ratio > subject_match[0]:
                 subject_match = (ratio, subject)
 
+        #Initialize mapping from course titles to objects, subject titles to objects, and list for course titles
         courses = {x['title']:x for x in classes_dict[subject_match[1]]}
         subjects = {x['description']:x for x in subject_list}
         course_titles = [k for (k, v) in courses.items()]
 
+        #Separate course titles by commas
         course_str = ', '.join(course_titles)
 
+        #Display all the course options from the best match
         embed=discord.Embed(title=f"Showing results for {subject_match[1]}", description="Please choose a course", color=0xff0000)
         embed.add_field(name="Type in a course name to see available sections", value=course_str)
-
         await ctx.send(embed=embed)
 
         def check(m):
             """Quick check to make sure only the person in the game and channel can respond"""
             return m.channel == ctx.channel and m.author == ctx.author
 
+        #Wait for their course choice
         msg = await self.bot.wait_for('message', check=check)
 
+        #Keep prompting until it's a valid course
         while msg.content.upper() not in course_titles:
             await ctx.send("Please enter course name exactly, case doesn't matter")
             msg = await self.bot.wait_for('message', check=check)
         
+        #Get their course object from the map
         chosen_course = courses[msg.content.upper()]
 
+        #Set up an embed title and description with their course
         embed=discord.Embed(title=f'{subject_match[1]}, {msg.content.upper()}', description=f'01:{subjects[subject_match[1]]["code"]}:{chosen_course["courseNumber"]}', color=0xff0000)
         
+        #Go through all the sections of the course
         for section in chosen_course['sections']:
+            #Set up variables describing the section
             index = section['index']
             status = 'open' if check_open(index) else 'closed'
             number = section['number']
             profs = '; '.join([x['name'] for x in section['instructors']])
 
+            #Add a field for that section
             embed.add_field(name=f'{number}, {index}\n{profs}', value=f'Status: {status}')
         
+        #Send the section data
         await ctx.send(embed=embed)
-
-
-
-
-
 
 
 def setup(bot):
