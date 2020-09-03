@@ -1,2 +1,4 @@
 discord.py==1.4.1
 requests
+fuzzywuzzy
+libgen-api
