@@ -14,10 +14,10 @@ Note that this guide is in fact **comprehensive**, more so than any seasoned pro
 
 #### Table of Contents
 
-[Installing Python](#installing-python)
-[Text Editor](#text-editor)
-[Installing and Using Git](#installing-and-using-git)
-[Setting Up a Testing Environment for RUCS24-Bot](#Setting-Up-a-Testing-Environment-for-RUCS24-Bot)
+* [Installing Python](#installing-python)
+* [Text Editor](#text-editor)
+* [Installing and Using Git](#installing-and-using-git)
+* [Setting Up a Testing Environment for RUCS24-Bot](#Setting-Up-a-Testing-Environment-for-RUCS24-Bot)
 ## Installing Python
 
 Python is an interpreted programming language, so we need to install the Python interpreter, as well as the set of tools it usually comes packaged with. Unless you're on a popular distribution of Linux, you should find, download and install Python 3.8.5 or newer from [this webpage](https://www.python.org/downloads/). When running the installer, make sure you select the option to add Python to your PATH. This is crucial for running your Discord bot. If you fail to perform this step, you can always [fix it](https://datatofish.com/add-python-to-windows-path/) later, so don't get anxious.
