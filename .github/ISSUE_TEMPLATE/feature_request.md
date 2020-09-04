@@ -7,8 +7,15 @@ assignees: ''
 
 ---
 
-#### Is the feature you're requesting a command or another kind of functionality?
-[ ] Command
-[ ] Other
+### Specify what type of functionality your request pertains to
 
-#### Describe how it should work
+- [ ] Command
+- [ ] Other
+
+### Describe how it should work
+
+Clear and concise description of how you expect the feature to behave, not necessarily how the feature should be deisgned
+
+#### [Optionally] Describe a potential solution
+
+Description of potential program design that would implement the proposed feature
