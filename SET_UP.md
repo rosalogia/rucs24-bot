@@ -10,8 +10,14 @@ RUCS24-Bot is a Discord bot written in Python. To begin working on its developme
 
 In this **comprehensive** guide we're going to describe the steps you'll need to take to set up all of these things and begin contributing to our bot.
 
-Note that this guide is in fact **comprehensive**, more so than any seasoned programmer will need it to be. That is because it is for beginners who have only ever programmed in personal or academic environments. If you already feel comfortable with one of the tools listed above, feel free to use the following table to skip to whichever ones are still relatively new to you. 
+Note that this guide is in fact **comprehensive**, more so than any seasoned programmer will need it to be. That is because it is for beginners who have only ever programmed in personal or academic environments. If you already feel comfortable with one of the tools listed above, feel free to use the following table to skip to whichever ones are still relatively new to you.
 
+#### Table of Contents
+
+[Installing Python](#installing-python)
+[Text Editor](#text-editor)
+[Installing and Using Git](#installing-and-using-git)
+[Setting Up a Testing Environment for RUCS24-Bot](#Setting-Up-a-Testing-Environment-for-RUCS24-Bot)
 ## Installing Python
 
 Python is an interpreted programming language, so we need to install the Python interpreter, as well as the set of tools it usually comes packaged with. Unless you're on a popular distribution of Linux, you should find, download and install Python 3.8.5 or newer from [this webpage](https://www.python.org/downloads/). When running the installer, make sure you select the option to add Python to your PATH. This is crucial for running your Discord bot. If you fail to perform this step, you can always [fix it](https://datatofish.com/add-python-to-windows-path/) later, so don't get anxious.
@@ -85,7 +91,7 @@ Consider installing `flake8` and setting up VS Code to use it like so:
 1. Run `pip install flake8` or `pip3 install flake8` in a terminal.
 	- You can open one up right where you are in VS Code by clicking on the `Terminal` menu at the top of VS Code and selecting `New Terminal` or pressing Control+Shift+`
 2. Navigate to `File > Preferences > Settings` or press `Control + Comma` to open up your settings, and search for "flake8"
-3. Make sure the following checkbox is ticked: ![Flake8](assets/flake8.png)
+3. Make sure the following checkbox is ticked: ![Flake8](assets/flake_8.png)
 
 To test that it is properly working, try creating a comment like this in your code:
 
@@ -103,7 +109,7 @@ However, this problem only exists with the version of VS Code that Microsoft dis
 
 There are no downsides to using this version of VS Code, and it is recommended that you do if you care about your privacy and are uncomfortable with a large corporation receiving data about how you use your computer and its tools. The link above includes more information on the Codium project as well as installation instructions for various operating systems.
 
-## Installing and Using `git`
+## Installing and Using Git
 
 `git` is the name of a software package whose explicit purpose is "version control." Version control is the process of keeping track of the changes made to a set of files or documents over a long period of time, such that if there's ever anything wrong with the current version of those files/documents, you will be able to see which particular change caused the problem, and "go back in time" to a version where the problem didn't exist.
 
