@@ -7,5 +7,8 @@ assignees: ''
 
 ---
 
-**Is the feature you're requesting a command or another kind of functionality?**
-A clear and concise description of what kind of functionality you're expecting from this addition.
+#### Is the feature you're requesting a command or another kind of functionality?
+[ ] Command
+[ ] Other
+
+#### Describe how it should work
