@@ -123,7 +123,7 @@ This means that you can [and should] use `git` even if your project is not uploa
 
 Let's try using `git` with the Demo project we made earlier. Once you've installed `git`, you should be able to use it from within a terminal you create in VS Code. In your Demo folder, run the command `git init` to turn your folder into a `git` repository. You should see VS Code responding to this. Particularly, the _source control_ icon should now have a little 1 next to it, indicating that 1 modification has been detected in the source of the project.
 
-![Source control](src_control.png)
+![Source control](assets/src_control.png)
 
 When using `git`, you are in control of which files should be version controlled and which files can safely be ignored by git. Some files have no reason to be version controlled. For example, your personal configuration file for the RUCS24-Bot should never be version controlled, as it should contain the token [essentially the username and password] for your bot account. Because of this, we have created a file in RUCS24-Bot's repository called `.gitignore`, which `git` automatically detects and reads to find out which files should never be version controlled. However, this works no differently than simply remembering to never add a certain file to version control. It is simply more convenient.
 
@@ -144,7 +144,7 @@ GitHub is an online platform for hosting, viewing, contributing to and managing 
 
 You should be met with some potentially daunting instructions. These are the ones we need:
 
-![GitHub instructions](github_instructions.png)
+![GitHub instructions](assets/github_instructions.png)
 
 You should be able to paste in every command listed to your terminal and face few to no problems. However, we should understand what's going on, even if only at the surface level.
 
