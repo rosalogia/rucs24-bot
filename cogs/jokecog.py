@@ -15,9 +15,7 @@ class JokeCog(commands.Cog):
         await ctx.send(apidata["setup"])
         response = await self.bot.wait_for("message")
         if response.content == "?":
-             await ctx.send(apidata ["punchline"])
-        
-
+            await ctx.send(apidata["punchline"])
 
 
 def setup(bot):
