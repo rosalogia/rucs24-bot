@@ -1,4 +1,4 @@
-from discord.ext import commands
+from discord.ext import commands, tasks
 import discord
 import requests
 import json
@@ -31,9 +31,77 @@ def check_open(index):
     return index in open_sections
 
 
+def remove_snipe(user_id, index):
+    """Removes the specified snipe from the json"""
+
+    # Load in the current snipes
+    with open("apidata/snipes.json", "r") as f:
+        snipes_dict = json.load(f)
+
+    # If the snipe exists, remove it, update json, and return true
+    # Else, return false
+    if user_id in snipes_dict.keys():
+        if index in snipes_dict[user_id]:
+            snipes_dict[user_id].remove(index)
+            with open("apidata/snipes.json", "w") as f:
+                json.dump(snipes_dict, f)
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
 class ApiCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+        # Start the sniper
+        self.sniper.start()
+
+    # Loops every 15 seconds
+    @tasks.loop(seconds=15)
+    async def sniper(self):
+        # Not adding a docstring because then it'll be visible in help, only an internal command
+
+        # Get open sections
+        open_sections_url = "https://sis.rutgers.edu/soc/api/openSections.gzip?year=2020&term=9&campus=NB"
+
+        # Try catch in case the api call fails
+        try:
+            # I load the text from requests call into a list called open_sections
+            # open_sections now contains indexes of all open sections
+            open_sections = json.loads(requests.get(open_sections_url).text)
+        except Exception as e:
+            print(e)
+            return
+
+        # Load in the snipes
+        with open("apidata/snipes.json", "r") as f:
+            snipes_dict = json.load(f)
+
+        # Go through every user and snipe
+        for user_id in snipes_dict.keys():
+            for index in snipes_dict[user_id]:
+                if index in open_sections:
+                    # Retrieve user object
+                    user = self.bot.get_user(int(user_id))
+
+                    # Create dm channel if necessary
+                    if user.dm_channel is None:
+                        await user.create_dm()
+
+                    # Remove their snipe and alert them
+                    remove_snipe(user_id, index)
+                    await user.dm_channel.send(
+                        f"Section {index} is open! Use !open {index} to see course description! Snipe removed"
+                    )
+
+    # Make sure sniper only runs after bot is ready
+    @sniper.before_loop
+    async def before_printer(self):
+        print("Logging on...")
+        await self.bot.wait_until_ready()
 
     @commands.command()
     async def open(self, ctx, index):
@@ -123,6 +191,60 @@ class ApiCog(commands.Cog):
 
         # Send the section data
         await ctx.send(embed=embed)
+
+    @commands.command()
+    async def addsnipe(self, ctx, index):
+        """Adds a snipe of the specified index to the user"""
+
+        # Get snipes dict
+        with open("apidata/snipes.json", "r") as f:
+            snipes_dict = json.load(f)
+
+        author_id = str(ctx.author.id)
+
+        # If they're not stored already, create an empty list for them
+        if not author_id in snipes_dict.keys():
+            snipes_dict[author_id] = []
+
+        # If they already have the snipe, tell them
+        if index in snipes_dict[author_id]:
+            await ctx.send("You already have this snipe!")
+            return
+        else:
+            snipes_dict[author_id].append(index)
+
+        # Dump the new dict and alert user
+        with open("apidata/snipes.json", "w") as f:
+            json.dump(snipes_dict, f)
+
+        await ctx.send("Snipe successfully added!")
+
+    @commands.command()
+    async def removesnipe(self, ctx, index):
+        """Removes a snipe of the specified index from the user"""
+
+        # Simply used remove_snipe and outputted to the user
+        if remove_snipe(str(ctx.author.id), index):
+            await ctx.send("Snipe removed!")
+        else:
+            await ctx.send("Did you even have that snipe?")
+
+    @commands.command()
+    async def snipes(self, ctx):
+        """List all of your snipes"""
+
+        # Load in snipes
+        with open("apidata/snipes.json", "r") as f:
+            snipes_dict = json.load(f)
+
+        # If they have no snipes, output that, otherwise output all their snipes
+        if (
+            str(ctx.author.id) not in snipes_dict.keys()
+            or len(snipes_dict[str(ctx.author.id)]) == 0
+        ):
+            await ctx.send("You don't have any snipes yet!")
+        else:
+            await ctx.send(", ".join([x for x in snipes_dict[str(ctx.author.id)]]))
 
 
 def setup(bot):
