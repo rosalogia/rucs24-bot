@@ -11,6 +11,7 @@ bot.load_extension("cogs.apicog")
 bot.load_extension("cogs.tictactoecog")
 bot.load_extension("cogs.connectfourcog")
 # bot.load_extension("cogs.rolecog")
+bot.load_extension("cogs.githubcog")
 bot.load_extension("cogs.reactcog")
 bot.load_extension("cogs.jokecog")
 
