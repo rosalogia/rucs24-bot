@@ -52,6 +52,8 @@ def poll_for_token(codes):
 with open("data/github_registrations.json", "r") as registration_file:
     registrations = json.load(registration_file)
 
+with open("data/contribution_exp.json", "r") as contribution_exp_file:
+    contribution_exp = json.load(contribution_exp_file)
 
 class GithubCog(commands.Cog):
     def __init__(self, bot):
@@ -87,6 +89,10 @@ class GithubCog(commands.Cog):
             with open("data/github_registrations.json", "w+") as registration_file:
                 registrations[str(ctx.author.id)] = auth_session.get_user().login
                 json.dump(registrations, registration_file)
+
+            with open("data/contribution_exp.json", "w+") as contribution_exp_file:
+                contribution_exp[str(ctx.author.id)] = 0
+                json.dump(contribution_exp, contribution_exp_file)
 
         except KeyError:
             print(f"Error dump: {token_response}")
