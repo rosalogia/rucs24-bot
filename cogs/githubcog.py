@@ -55,6 +55,7 @@ with open("data/github_registrations.json", "r") as registration_file:
 with open("data/contribution_exp.json", "r") as contribution_exp_file:
     contribution_exp = json.load(contribution_exp_file)
 
+
 class GithubCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
