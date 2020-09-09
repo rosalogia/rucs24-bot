@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 from functools import reduce
 from math import floor, sqrt
 
-
 # Load the registration data ahead of time
+# Make sure you've created these files
 with open("data/github_registrations.json", "r") as registration_file:
     registrations = json.load(registration_file)
 
