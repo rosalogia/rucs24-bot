@@ -23,9 +23,7 @@ class ExpCog(commands.Cog):
         with open("config.json", "r") as config_file:
             # Only load configuration that has to do with this cog
             self.config = json.load(config_file)["github"]
-            self.github_session = Github(
-                    self.config["user"], self.config["password"]
-                )
+            self.github_session = Github(self.config["user"], self.config["password"])
 
             # If we ever have more than one RUCS24
             # repository, we can store them all
@@ -36,9 +34,64 @@ class ExpCog(commands.Cog):
                 for repo in self.config["repositories"]
             ]
 
+            self.reward_roles = self.config["reward_roles"]
+
         self.event_cache = []
 
         self.update.start()
+
+    async def award_roles(self, guild_id, user_id):
+        """Give the specified reward roles to the user
+        if applicable
+
+        Args:
+            guild_id (string):  the id of the guild to which
+                                the roles belong
+
+            user_id (string):   the user whose roles are
+                                being updated"""
+
+        with open("data/github_registrations.json", "r") as registration_file:
+            registrations = json.load(registration_file)
+
+        with open("data/contribution_exp.json", "r") as contribution_exp_file:
+            contribution_exp = json.load(contribution_exp_file)
+
+        current_guild = self.bot.get_guild(int(guild_id))
+        member = current_guild.get_member(int(user_id))
+
+        print(f"Looking to award roles for: {member.name}")
+
+        if self.reward_roles == {}:
+            print("Reward roles not configured")
+            return
+        else:
+            level_requirements = sorted(list(self.reward_roles.keys()))
+            level_requirements.reverse()
+            print(f"Level requirements: {level_requirements}")
+
+            role_assigned = False
+
+            for role_level in level_requirements:
+                role_object = current_guild.get_role(self.reward_roles[role_level])
+                print(f"Role being tested: {role_object.name}")
+                if (
+                    level(contribution_exp[user_id]) >= int(role_level)
+                    and not role_assigned
+                ):
+                    if role_object in member.roles:
+                        return
+                    else:
+                        print(
+                            f"{member.name} meets the requirements for {role_object.name}"
+                        )
+                        await member.add_roles(role_object)
+                        print(f"Assigned aforementioned role to aforementioned member")
+                        role_assigned = True
+                elif role_assigned and role_object in member.roles:
+                    await member.remove_roles(role_object)
+                else:
+                    pass
 
     def statistics_embed(self, channel_id, author_id):
         """Create and return an embed containing
@@ -63,7 +116,6 @@ class ExpCog(commands.Cog):
         with open("data/contribution_exp.json", "r") as contribution_exp_file:
             contribution_exp = json.load(contribution_exp_file)
 
-
         # Getting a member object can be ugly since
         # we need the Guild object first. This is
         # actually the only reason this method needs
@@ -84,7 +136,7 @@ class ExpCog(commands.Cog):
             inline=True,
         )
         stats_embed.add_field(name="Level", value=f"{level(author_exp)}", inline=True)
-        stats_embed.add_field(name="Current EXP", value=str(author_exp), inline=True)
+        stats_embed.add_field(name="Current EXP", value=str(floor(author_exp)), inline=True)
         stats_embed.add_field(
             name="EXP till Next Level",
             value=str(floor(exp(level(author_exp) + 1) - author_exp)),
@@ -160,7 +212,7 @@ class ExpCog(commands.Cog):
             registrations = json.load(registration_file)
 
         with open("data/contribution_exp.json", "r") as contribution_exp_file:
-                    contribution_exp = json.load(contribution_exp_file)
+            contribution_exp = json.load(contribution_exp_file)
 
         raw_event_list = reduce(
             lambda x, y: x + y, map(lambda repo: repo.get_events(), self.repositories)
@@ -226,6 +278,11 @@ class ExpCog(commands.Cog):
                         embed=self.statistics_embed(str(update_channel.id), user),
                     )
 
+                # Unless we set a single server in config
+                # we can only award roles if an update channel
+                # is specified
+                await self.award_roles(str(update_channel.guild.id), user)
+
         with open("data/contribution_exp.json", "w+") as contribution_exp_file:
             json.dump(contribution_exp, contribution_exp_file)
 
@@ -241,7 +298,7 @@ class ExpCog(commands.Cog):
     @commands.command()
     async def stats(self, ctx, *user):
         """View information about your or someone else's contribution level"""
-        
+
         with open("data/github_registrations.json", "r") as registration_file:
             registrations = json.load(registration_file)
 
@@ -276,7 +333,8 @@ class ExpCog(commands.Cog):
                 await ctx.send("Specified user is not registered.")
             else:
                 raw_event_list = reduce(
-                    lambda x, y: x + y, map(lambda repo: repo.get_events(), self.repositories)
+                    lambda x, y: x + y,
+                    map(lambda repo: repo.get_events(), self.repositories),
                 )
 
                 self.event_cache += list(map(lambda event: event.id, raw_event_list))
@@ -284,10 +342,9 @@ class ExpCog(commands.Cog):
                 user_events = list(
                     filter(
                         lambda event: event.actor.login == registrations[user],
-                        raw_event_list
+                        raw_event_list,
                     )
                 )
-
 
                 try:
                     gained_exp = sum(map(self.score_event, user_events))
@@ -295,10 +352,11 @@ class ExpCog(commands.Cog):
                     gained_exp = 0
 
                 contribution_exp[user] += gained_exp
-                
+
+                await self.award_roles(str(ctx.channel.guild.id), user)
+
                 with open("data/contribution_exp.json", "w") as contribution_exp_file:
                     json.dump(contribution_exp, contribution_exp_file)
-
 
 
 def setup(bot):

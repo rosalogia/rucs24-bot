@@ -36,6 +36,12 @@
             "ReleaseEvent": 0,
             "SponsorshipEvent": 0,
             "WatchEvent": 2.5
+        },
+        "reward_roles" :
+        {
+            "1" : lv_1_role_id,
+            "3" : lv_3_role_id,
+            "5" : lv_5_role_id 
         }
     }
 }
