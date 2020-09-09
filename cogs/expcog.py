@@ -6,14 +6,6 @@ from datetime import datetime, timedelta
 from functools import reduce
 from math import floor, sqrt
 
-# Load the registration data ahead of time
-# Make sure you've created these files
-with open("data/github_registrations.json", "r") as registration_file:
-    registrations = json.load(registration_file)
-
-with open("data/contribution_exp.json", "r") as contribution_exp_file:
-    contribution_exp = json.load(contribution_exp_file)
-
 
 def level(exp):
     """A user's contributor level as a function of their exp"""
@@ -64,6 +56,13 @@ class ExpCog(commands.Cog):
                             statistics for the given member
 
         """
+
+        with open("data/github_registrations.json", "r") as registration_file:
+            registrations = json.load(registration_file)
+
+        with open("data/contribution_exp.json", "r") as contribution_exp_file:
+            contribution_exp = json.load(contribution_exp_file)
+
 
         # Getting a member object can be ugly since
         # we need the Guild object first. This is
@@ -157,6 +156,12 @@ class ExpCog(commands.Cog):
         the event is registered, it won't be registered
         again."""
 
+        with open("data/github_registrations.json", "r") as registration_file:
+            registrations = json.load(registration_file)
+
+        with open("data/contribution_exp.json", "r") as contribution_exp_file:
+                    contribution_exp = json.load(contribution_exp_file)
+
         raw_event_list = reduce(
             lambda x, y: x + y, map(lambda repo: repo.get_events(), self.repositories)
         )
@@ -236,6 +241,10 @@ class ExpCog(commands.Cog):
     @commands.command()
     async def stats(self, ctx, *user):
         """View information about your or someone else's contribution level"""
+        
+        with open("data/github_registrations.json", "r") as registration_file:
+            registrations = json.load(registration_file)
+
         author = (
             ctx.message.mentions[0]
             if len(user) > 0 and len(ctx.message.mentions) > 0
@@ -248,6 +257,48 @@ class ExpCog(commands.Cog):
         else:
             stats_embed = self.statistics_embed(str(ctx.channel.id), str(author.id))
             await ctx.send(embed=stats_embed)
+
+    @commands.command()
+    async def restore(self, ctx, user):
+        """Restore EXP for a user that the bot
+        wasn't able to grab recent events for"""
+
+        if not ctx.author.permissions_in(ctx.channel).administrator:
+            await ctx.send("You cannot use this command.")
+        else:
+            with open("data/github_registrations.json", "r") as registration_file:
+                registrations = json.load(registration_file)
+
+            with open("data/contribution_exp.json", "r") as contribution_exp_file:
+                contribution_exp = json.load(contribution_exp_file)
+
+            if user not in registrations.keys():
+                await ctx.send("Specified user is not registered.")
+            else:
+                raw_event_list = reduce(
+                    lambda x, y: x + y, map(lambda repo: repo.get_events(), self.repositories)
+                )
+
+                self.event_cache += list(map(lambda event: event.id, raw_event_list))
+
+                user_events = list(
+                    filter(
+                        lambda event: event.actor.login == registrations[user],
+                        raw_event_list
+                    )
+                )
+
+
+                try:
+                    gained_exp = sum(map(self.score_event, user_events))
+                except TypeError:
+                    gained_exp = 0
+
+                contribution_exp[user] += gained_exp
+                
+                with open("data/contribution_exp.json", "w") as contribution_exp_file:
+                    json.dump(contribution_exp, contribution_exp_file)
+
 
 
 def setup(bot):
