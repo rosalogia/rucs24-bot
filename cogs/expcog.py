@@ -71,6 +71,13 @@ class ExpCog(commands.Cog):
 
             for role_level in level_requirements:
                 role_object = current_guild.get_role(self.reward_roles[role_level])
+                if (
+                        level(contribution_exp[user_id]) >= int(role_level)
+                        and not role_assigned
+                    ):
+                    if role_object in member.roles:
+                        return
+                    else:
                         await member.add_roles(role_object)
                         print(
                             f"{member.name} meets the requirements for {role_object.name}"
