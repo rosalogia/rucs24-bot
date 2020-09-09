@@ -60,21 +60,17 @@ class ExpCog(commands.Cog):
         current_guild = self.bot.get_guild(int(guild_id))
         member = current_guild.get_member(int(user_id))
 
-        print(f"Looking to award roles for: {member.name}")
 
         if self.reward_roles == {}:
-            print("Reward roles not configured")
             return
         else:
             level_requirements = sorted(list(self.reward_roles.keys()))
             level_requirements.reverse()
-            print(f"Level requirements: {level_requirements}")
 
             role_assigned = False
 
             for role_level in level_requirements:
                 role_object = current_guild.get_role(self.reward_roles[role_level])
-                print(f"Role being tested: {role_object.name}")
                 if (
                     level(contribution_exp[user_id]) >= int(role_level)
                     and not role_assigned
@@ -82,11 +78,7 @@ class ExpCog(commands.Cog):
                     if role_object in member.roles:
                         return
                     else:
-                        print(
-                            f"{member.name} meets the requirements for {role_object.name}"
-                        )
                         await member.add_roles(role_object)
-                        print(f"Assigned aforementioned role to aforementioned member")
                         role_assigned = True
                 elif role_assigned and role_object in member.roles:
                     await member.remove_roles(role_object)
