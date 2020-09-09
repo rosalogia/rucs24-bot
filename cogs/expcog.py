@@ -264,6 +264,9 @@ class ExpCog(commands.Cog):
 
             # print(f"Update channel is none: {update_channel is None}")
 
+            with open("data/contribution_exp.json", "w+") as contribution_exp_file:
+                json.dump(contribution_exp, contribution_exp_file)
+        
             if update_channel:
                 current_level = level(contribution_exp[user])
 
@@ -280,8 +283,6 @@ class ExpCog(commands.Cog):
                 # is specified
                 await self.award_roles(str(update_channel.guild.id), user)
 
-        with open("data/contribution_exp.json", "w+") as contribution_exp_file:
-            json.dump(contribution_exp, contribution_exp_file)
 
     @update.before_loop
     async def before_update(self):
