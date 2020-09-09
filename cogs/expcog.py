@@ -79,11 +79,8 @@ class ExpCog(commands.Cog):
                         return
                     else:
                         await member.add_roles(role_object)
-                        print(
-                            f"{member.name} meets the requirements for {role_object.name}"
-                        )
+
                         await member.add_roles(role_object)
-                        print(f"Assigned aforementioned role to aforementioned member")
                         role_assigned = True
                 elif role_assigned and role_object in member.roles:
                     await member.remove_roles(role_object)
