@@ -14,6 +14,7 @@ bot.load_extension("cogs.connectfourcog")
 # bot.load_extension("cogs.expcog")
 bot.load_extension("cogs.reactcog")
 bot.load_extension("cogs.jokecog")
+bot.load_extension("cogs.commandcog")
 
 # Run the bot using the token in config.json
 bot.run(config["botToken"])
