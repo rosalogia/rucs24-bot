@@ -1,11 +1,17 @@
 import discord
 from discord.ext import commands
+import requests
 import json
 
 class DuplicateError(Exception):
     """Exception raised if an already
     existing value is added to a collection
     that prohibits duplicate values"""
+    pass
+
+class InvalidError(Exception):
+    """Exception raised if the requested
+    username does not exist"""
     pass
 
 class MinecraftCog(commands.Cog):
@@ -26,11 +32,20 @@ class MinecraftCog(commands.Cog):
         with open(self.whitelist_path, "r") as whitelist_file:
             whitelist = json.load(whitelist_file)
 
+        whitelist_usernames = list(map(lambda user: user["name"], whitelist))
+
+
         if isAddition:
-            if username in whitelist:
+            if username in whitelist_usernames:
                 raise DuplicateError
             else:
-                whitelist.append(username)
+                player_uuid_req = requests.get(f"https://api.mojang.com/users/profiles/minecraft/{username}")
+                if player_uuid_req.status_code != 200:
+                    raise InvalidError
+                    return
+                else:
+                    player_uuid = player_uuid_req.json()["id"]
+                    whitelist.append({"uuid" : player_uuid, "name": username})
         else:
             # This might throw a ValueError,
             # but we should handle it later
@@ -90,6 +105,9 @@ class MinecraftCog(commands.Cog):
                 self.update_whitelist(username)
             except DuplicateError:
                 await ctx.send("You are already registered")
+                return
+            except InvalidError:
+                await ctx.send("The specified username, {username}, is invalid")
                 return
 
             self.update_accountmap(ctx.author.id, username)
