@@ -72,9 +72,13 @@ class GithubCog(commands.Cog):
             f"the code: {code_response['user_code']}"
         )
 
-        token_response = polling.poll(
-            lambda: poll_for_token(code_response), step=10, poll_forever=True
-        )
+        try:
+            token_response = polling.poll(
+                lambda: poll_for_token(code_response), step=10, timeout=60
+            )
+        except polling.TimeoutException:
+            await ctx.author.send("Timed out. Please try the !register command again.")
+            return
 
         try:
             user_token = token_response["access_token"]
