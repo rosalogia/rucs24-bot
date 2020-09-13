@@ -3,16 +3,21 @@ from discord.ext import commands
 import requests
 import json
 
+
 class DuplicateError(Exception):
     """Exception raised if an already
     existing value is added to a collection
     that prohibits duplicate values"""
+
     pass
+
 
 class InvalidError(Exception):
     """Exception raised if the requested
     username does not exist"""
+
     pass
+
 
 class MinecraftCog(commands.Cog):
     def __init__(self, bot):
@@ -34,18 +39,19 @@ class MinecraftCog(commands.Cog):
 
         whitelist_usernames = list(map(lambda user: user["name"], whitelist))
 
-
         if isAddition:
             if username in whitelist_usernames:
                 raise DuplicateError
             else:
-                player_uuid_req = requests.get(f"https://api.mojang.com/users/profiles/minecraft/{username}")
+                player_uuid_req = requests.get(
+                    f"https://api.mojang.com/users/profiles/minecraft/{username}"
+                )
                 if player_uuid_req.status_code != 200:
                     raise InvalidError
                     return
                 else:
                     player_uuid = player_uuid_req.json()["id"]
-                    whitelist.append({"uuid" : player_uuid, "name": username})
+                    whitelist.append({"uuid": player_uuid, "name": username})
         else:
             # This might throw a ValueError,
             # but we should handle it later
@@ -75,7 +81,7 @@ class MinecraftCog(commands.Cog):
             # but again we should handle
             # that later
             del accountmap[str(user_id)]
-       
+
         with open("data/mc_accountmap.json", "w") as accountmap_file:
             json.dump(accountmap, accountmap_file)
 
@@ -89,7 +95,7 @@ class MinecraftCog(commands.Cog):
 
         with open("data/mc_accountmap.json", "r") as accountmap_file:
             accountmap = json.load(accountmap_file)
-        
+
         if ctx.channel.id != self.confirmation_channel_id:
             await ctx.send(
                 "This is not the right channel for this command. "
@@ -97,9 +103,9 @@ class MinecraftCog(commands.Cog):
             )
         elif str(ctx.author.id) in accountmap.keys():
             await ctx.send(
-                        f"User {ctx.author.mention} has already "
-                        f"registered username {accountmap[str(ctx.author.id)]}"
-                    )
+                f"User {ctx.author.mention} has already "
+                f"registered username {accountmap[str(ctx.author.id)]}"
+            )
         else:
             try:
                 self.update_whitelist(username)
@@ -112,7 +118,9 @@ class MinecraftCog(commands.Cog):
 
             self.update_accountmap(ctx.author.id, username)
 
-            await ctx.send(f"Whitelisted minecraft user {username}. `!mcunregister` to undo this")
+            await ctx.send(
+                f"Whitelisted minecraft user {username}. `!mcunregister` to undo this"
+            )
 
     @commands.command()
     async def mcunregister(self, ctx):
