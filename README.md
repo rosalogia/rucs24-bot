@@ -48,3 +48,4 @@ in `main.py`. Here are the presently available features:
 * "react": A more robust implementation of "role"
 * "joke": The bot tells a user a joke when a command is called
 * "minecraft": Allows the user to whitelist themselves in a minecraft server by registering their username with the bot
+* "fun": Provides arbitrary and entertaining commands
