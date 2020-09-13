@@ -60,7 +60,6 @@ class ExpCog(commands.Cog):
         current_guild = self.bot.get_guild(int(guild_id))
         member = current_guild.get_member(int(user_id))
 
-
         if self.reward_roles == {}:
             return
         else:
@@ -72,9 +71,9 @@ class ExpCog(commands.Cog):
             for role_level in level_requirements:
                 role_object = current_guild.get_role(self.reward_roles[role_level])
                 if (
-                        level(contribution_exp[user_id]) >= int(role_level)
-                        and not role_assigned
-                    ):
+                    level(contribution_exp[user_id]) >= int(role_level)
+                    and not role_assigned
+                ):
                     if role_object in member.roles:
                         return
                     else:
@@ -130,7 +129,9 @@ class ExpCog(commands.Cog):
             inline=True,
         )
         stats_embed.add_field(name="Level", value=f"{level(author_exp)}", inline=True)
-        stats_embed.add_field(name="Current EXP", value=str(floor(author_exp)), inline=True)
+        stats_embed.add_field(
+            name="Current EXP", value=str(floor(author_exp)), inline=True
+        )
         stats_embed.add_field(
             name="EXP till Next Level",
             value=str(floor(exp(level(author_exp) + 1) - author_exp)),
@@ -263,7 +264,7 @@ class ExpCog(commands.Cog):
 
             with open("data/contribution_exp.json", "w+") as contribution_exp_file:
                 json.dump(contribution_exp, contribution_exp_file)
-        
+
             if update_channel:
                 current_level = level(contribution_exp[user])
 
@@ -279,7 +280,6 @@ class ExpCog(commands.Cog):
                 # we can only award roles if an update channel
                 # is specified
                 await self.award_roles(str(update_channel.guild.id), user)
-
 
     @update.before_loop
     async def before_update(self):

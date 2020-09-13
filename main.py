@@ -25,9 +25,10 @@ features = ["api",
             "exp",
             "react",
             "joke",
-            "minecraft"]
+            "minecraft"
+            "fun"]
 
-# Load extensions specified in config
+# Load extensions specified in features
 for feature in features:
     try:
         bot.load_extension(f"cogs.{feature}cog")
