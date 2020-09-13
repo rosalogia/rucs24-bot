@@ -25,7 +25,7 @@ features = ["api",
             "exp",
             "react",
             "joke",
-            "minecraft"
+            "minecraft",
             "fun"]
 
 # Load extensions specified in features
