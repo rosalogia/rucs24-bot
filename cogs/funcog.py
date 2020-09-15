@@ -10,7 +10,9 @@ class FunCog(commands.Cog):
     @commands.command()
     async def randomize(self, ctx, *args):
         """Randomizes capitalization of inputted string"""
-        await ctx.send("".join([choice([c.upper(), c.lower()]) for c in " ".join(args)]))
+        await ctx.send(
+            "".join([choice([c.upper(), c.lower()]) for c in " ".join(args)])
+        )
 
 
 def setup(bot):
