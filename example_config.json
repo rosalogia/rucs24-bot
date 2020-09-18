@@ -12,5 +12,41 @@
                 "🕴️"    :   they_them_role_id
             }
         }
+    },
+    "github" :
+    {
+        "user" : your_github_username,
+        "password" : your_github_password,
+        "repositories" : ["rosalogia/rucs24-bot"],
+        "update_channel" : update_channel_id,
+        "score_table" :
+        {
+            "CommitCommentEvent": 0,
+            "CreateEvent": 0,
+            "DeleteEvent": 0,
+            "ForkEvent": 20,
+            "GollumEvent": 0,
+            "IssueCommentEvent": 2.5,
+            "IssuesEvent": 5,
+            "MemberEvent": 0,
+            "PublicEvent": 0,
+            "PullRequestReviewCommentEvent": 2.5,
+            "PullRequestReviewEvent": 2.5,
+            "PushEvent": 0,
+            "ReleaseEvent": 0,
+            "SponsorshipEvent": 0,
+            "WatchEvent": 2.5
+        },
+        "reward_roles" :
+        {
+            "1" : lv_1_role_id,
+            "3" : lv_3_role_id,
+            "5" : lv_5_role_id 
+        }
+    },
+    "minecraft" :
+    {
+        "whitelist_path" : path_to_whitelist_json,
+        "confirmation_channel_id" : your_confirmation_channel_id
     }
 }
