@@ -4,20 +4,10 @@ A discord bot for the Rutgers Class of 2024 Computer Science server
 
 ## Build Instructions
 
-1. Create a file called `config.json` and include the following contents, but be sure to replace YOUR_TOKEN with your bot account's token and exclude any features you don't want.
+1. Create a file called `config.json` and include the following contents, but be sure to replace YOUR_TOKEN with your bot account's token.
 ```json
 {
     "botToken" : YOUR_TOKEN,
-    "features" :
-    [
-      "api",
-      "tictactoe",
-      "connectfour",
-      "github",
-      "exp",
-      "react",
-      "joke",
-    ]
 }
 ```
 2. Run `pip install -r requirements.txt`
