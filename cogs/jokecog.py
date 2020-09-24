@@ -13,9 +13,14 @@ class JokeCog(commands.Cog):
         r = requests.get("https://official-joke-api.appspot.com/random_joke")
         apidata = r.json()
         await ctx.send(apidata["setup"])
-        response = await self.bot.wait_for("message")
+
+        def check(message):
+            return message.author.id == ctx.author.id
+
+        response = await self.bot.wait_for("message", check=check)
         if response.content == "?":
             await ctx.send(apidata["punchline"])
+
 
 
 def setup(bot):
