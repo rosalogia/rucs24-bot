@@ -31,6 +31,7 @@ features = [
     "minecraft",
     "fun",
     "codeexecution",
+    "latex",
 ]
 
 # Load extensions specified in features
