@@ -16,9 +16,6 @@ class bcolors:
 # Initialize bot with prefix '!'
 bot = commands.Bot(command_prefix="!", help_command=None)
 
-# Load the core functionality (help, on_ready, etc.)
-bot.load_extension("cogs.corecog")
-
 features = [
     "api",
     "tictactoe",
@@ -32,6 +29,7 @@ features = [
     "fun",
     "codeexecution",
     "latex",
+    "google",
 ]
 
 # Load extensions specified in features

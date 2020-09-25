@@ -22,6 +22,5 @@ class JokeCog(commands.Cog):
             await ctx.send(apidata["punchline"])
 
 
-
 def setup(bot):
     bot.add_cog(JokeCog(bot))
