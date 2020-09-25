@@ -3,7 +3,6 @@ from discord.ext import commands
 from googlesearch import search
 import asyncio
 import requests
-from bs4 import BeautifulSoup
 from pyquery import PyQuery as pq
 
 # class TitleParser(HTMLParser):
