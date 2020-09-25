@@ -27,22 +27,25 @@ class GoogleCog(commands.Cog):
 
     @commands.command()
     async def ggl(self, ctx, *, query):
+        """Takes in desired search and prints top result"""
+
         result = []
         for i in search(query, tld="com", lang="en", num=1, start=0, stop=1, pause=2.0):
             result.append(str(i))
-        print(result[0])
 
         if pq(requests.get(result[0]).content)("head title").text() == "":
             title = "Title Not Found"
         else:
             title = pq(requests.get(result[0]).content)("head title").text()
+
         embed = discord.Embed(
             title="Google Searches",
             description="Here is your result",
             color=discord.Color.blue(),
         )
         embed.set_thumbnail(
-            url="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-suite-everything-you-need-know-about-google-newest-0.png"
+            url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53"
+            + "/Google_%22G%22_Logo.svg/235px-Google_%22G%22_Logo.svg.png"
         )
         embed.add_field(name=title, value=result[0], inline=False)
 
@@ -50,7 +53,7 @@ class GoogleCog(commands.Cog):
 
     @commands.command()
     async def ggl10(self, ctx, *, query):
-        """Takes in desired search and number of results to output given Google Searches"""
+        """Takes in desired search and prints top ten results"""
 
         def get_title(url):
             return pq(requests.get(url).content)("head title").text()
