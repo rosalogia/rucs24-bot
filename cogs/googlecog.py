@@ -75,7 +75,8 @@ class GoogleCog(commands.Cog):
                 color=discord.Color.blue(),
             )
             embed.set_thumbnail(
-                url="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-suite-everything-you-need-know-about-google-newest-0.png"
+                url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53"
+                + "/Google_%22G%22_Logo.svg/235px-Google_%22G%22_Logo.svg.png"
             )
 
             for link, title in results[start:end]:
