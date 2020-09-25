@@ -24,9 +24,12 @@ class LatexCog(commands.Cog):
 
     @commands.command()
     async def latexcol(self, ctx, *, arguments):
-        """Parses LaTeX and returns an image with the formatted result using a specified color"""
+        """
+        Parses LaTeX and returns an image with the formatted result
+        using a specified color
+        """
         res = re.search("\\s", arguments)
-        if res == None:
+        if res is None:
             error = "Error: no color provided"
             error += "\nValid colors: %s" % (
                 ", ".join("`" + x + "`" for x in cols.keys())
