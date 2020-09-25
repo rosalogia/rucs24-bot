@@ -16,19 +16,6 @@ class bcolors:
 # Initialize bot with prefix '!'
 bot = commands.Bot(command_prefix="!", help_command=None)
 
-# Load the core functionality (help, on_ready, etc.)
-bot.load_extension("cogs.corecog")
-bot.load_extension("cogs.apicog")
-bot.load_extension("cogs.tictactoecog")
-bot.load_extension("cogs.connectfourcog")
-# bot.load_extension("cogs.rolecog")
-# bot.load_extension("cogs.githubcog")
-# bot.load_extension("cogs.expcog")
-bot.load_extension("cogs.reactcog")
-bot.load_extension("cogs.jokecog")
-bot.load_extension("cogs.mutecog")
-bot.load_extension("cogs.googlecog")
-
 features = [
     "api",
     "tictactoe",
@@ -41,6 +28,7 @@ features = [
     "minecraft",
     "fun",
     "codeexecution",
+    "google",
 ]
 
 # Load extensions specified in features
