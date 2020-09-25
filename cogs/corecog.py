@@ -27,11 +27,44 @@ class CoreCog(commands.Cog):
             title="Help", description="RUCS24 Commands", color=0xFF0000
         )
 
+        # Stores cog name and maps to all the functions
+        cogs_dict = {}
+
         # Go through each command, access its name and docstring, add to embed
         for func in self.bot.walk_commands():
-            embed.add_field(name="!" + func.name, value=func.help, inline=False)
+            # Adds the function to cogs_dict based on its cog
+            try:
+                cogs_dict[func.cog_name.lower()].append((func.name, func.help))
+            except:
+                cogs_dict[func.cog_name.lower()] = [(func.name, func.help)]
 
-        # Finally, send the embed
+        description = ""
+
+        # Create the description, add all the commands, and send the embed
+        for cog in cogs_dict.keys():
+            description += cog + "\n"
+
+        embed = discord.Embed(title="Cog List", description=description, color=0xFF0000)
+        await ctx.send(embed=embed)
+
+        def check(m):
+            """Quick check to make sure only the person who requested help can respond"""
+            return m.channel == ctx.channel and m.author == ctx.author
+
+        # Wait for user cog choice
+        msg = await self.bot.wait_for("message", check=check)
+
+        # If they had an invalid cog, exit the function
+        if msg.content.lower() not in cogs_dict.keys():
+            await ctx.send("Not a valid cog")
+            return
+
+        # Add all commands for their chosen cog and output
+        embed = discord.Embed(title=msg.content.capitalize(), description="Help")
+
+        for command in cogs_dict[msg.content.lower()]:
+            embed.add_field(name="!" + command[0], value=command[1], inline=False)
+
         await ctx.send(embed=embed)
 
 

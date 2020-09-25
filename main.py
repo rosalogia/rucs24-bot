@@ -1,10 +1,22 @@
 from configuration import config
 from discord.ext import commands
 
+
+class bcolors:
+    HEADER = "\033[95m"
+    OKBLUE = "\033[94m"
+    OKGREEN = "\033[92m"
+    WARNING = "\033[93m"
+    FAIL = "\033[91m"
+    ENDC = "\033[0m"
+    BOLD = "\033[1m"
+    UNDERLINE = "\033[4m"
+
+
 # Initialize bot with prefix '!'
 bot = commands.Bot(command_prefix="!", help_command=None)
 
-# Load extensions from cogs folder
+# Load the core functionality (help, on_ready, etc.)
 bot.load_extension("cogs.corecog")
 bot.load_extension("cogs.apicog")
 bot.load_extension("cogs.tictactoecog")
@@ -16,5 +28,27 @@ bot.load_extension("cogs.reactcog")
 bot.load_extension("cogs.jokecog")
 bot.load_extension("cogs.mutecog")
 bot.load_extension("cogs.googlecog")
+
+features = [
+    "api",
+    "tictactoe",
+    "connectfour",
+    "role",
+    "github",
+    "exp",
+    "react",
+    "joke",
+    "minecraft",
+    "fun",
+    "codeexecution",
+]
+
+# Load extensions specified in features
+for feature in features:
+    try:
+        bot.load_extension(f"cogs.{feature}cog")
+    except Exception:
+        print(f"{bcolors.FAIL}WARN: Cog {feature} failed to load{bcolors.ENDC}")
+
 # Run the bot using the token in config.json
 bot.run(config["botToken"])
