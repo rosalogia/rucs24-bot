@@ -15,14 +15,6 @@ cols = {
     "blue": "\\bg_blue&space;",
 }
 
-coltuples = {
-    "white": (255, 255, 255),
-    "black": (0, 0, 0),
-    "red": (255, 0, 0),
-    "green": (0, 128, 1),
-    "blue": (0, 0, 255),
-}
-
 
 class LatexCog(commands.Cog):
     def __init__(self, bot):
@@ -76,13 +68,11 @@ async def send_latex(ctx, inp, col="black"):
 
     res = requests.get(req_url)
     img = Image.open(BytesIO(res.content))
-    if col in coltuples:
-        newimg = add_margin(img, 10, 10, 10, 10, coltuples[col])
-    else:
-        newimg = img
+    if col != "transparent":
+        img = add_margin(img, 10, 10, 10, 10)
 
     buf = BytesIO()
-    newimg.save(buf, format="PNG")
+    img.save(buf, format="PNG")
     buf.seek(0)
     disc_imgfile = discord.File(buf, filename="latex.png")
 
@@ -93,12 +83,19 @@ async def send_latex(ctx, inp, col="black"):
     await ctx.send(embed=embed, file=disc_imgfile)
 
 
-def add_margin(pil_img, top, right, bottom, left, color):
+def add_margin(pil_img, top, right, bottom, left):
     """Adds margins to a PIL image
+
+    This function relies on 2 preconditions:
+        1. The image provided is using the palette ("P") color mode
+        2. The first color in the palette is the background color
+    Both of these preconditions should always hold for images from the codecogs API,
+    but may not hold for all images, so this should not be used as a general purpose
+    function for adding margins to an image.
+
     Args:
         pil_img: The PIL image to add margins to
         top, right, bottom, left: The width of the margin on each side
-        color: The RGB color to make the margins
 
     Returns:
         A new PIL image with the margins added
@@ -106,7 +103,8 @@ def add_margin(pil_img, top, right, bottom, left, color):
     width, height = pil_img.size
     new_width = width + right + left
     new_height = height + top + bottom
-    result = Image.new("RGB", (new_width, new_height), color)
+    result = Image.new("P", (new_width, new_height), 0)
+    result.putpalette(pil_img.getpalette())
     result.paste(pil_img, (left, top))
     return result
 
