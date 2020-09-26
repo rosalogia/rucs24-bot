@@ -35,7 +35,7 @@ class LatexCog(commands.Cog):
         if res is None:
             error = "Error: no color provided"
             error += "\nValid colors: %s" % (
-                ", ".join("`" + x + "`" for x in cols.keys())
+                ", ".join("`%s`" % (x) for x in cols.keys())
             )
             await ctx.send(error)
             return
