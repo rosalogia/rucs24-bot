@@ -28,6 +28,7 @@ features = [
     "minecraft",
     "fun",
     "codeexecution",
+    "latex",
     "google",
 ]
 

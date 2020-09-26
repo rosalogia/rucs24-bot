@@ -4,5 +4,6 @@ fuzzywuzzy
 python-Levenshtein
 pygithub
 polling
+pillow
 googlesearch
 pyquery
