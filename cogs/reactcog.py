@@ -8,7 +8,7 @@ class ReactCog(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.has_role("Admin")  # Only for admins
+    @commands.has_role("Bot Commander")  # Only for admins
     async def addreactionrole(self, ctx, channel, num_rr_str, *args):
         """Enter channel name, number of reaction roles, and message to send, sends reaction role msg"""
 
