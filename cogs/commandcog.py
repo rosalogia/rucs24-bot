@@ -51,7 +51,7 @@ class CommandCog(commands.Cog):
         with open("jsondata/commands.json", "r") as f:
             commands = json.load(f)
 
-        if msg.content in commands.keys():
+        if msg.content in commands.keys() and msg.author.id != self.bot.user.id:
             await msg.channel.send(commands[msg.content])
 
 

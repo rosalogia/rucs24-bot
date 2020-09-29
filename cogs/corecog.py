@@ -12,11 +12,11 @@ class CoreCog(commands.Cog):
         # Uses client.user to output name and id of bot
         print(f"Logged on as {self.bot.user}")
 
-    @commands.command()
-    async def echo(self, ctx, *args):
-        """Takes in space separated arguments and outputs those same arguments"""
-        # Uses join command to space separate args, no matter how many there are
-        await ctx.send(" ".join(args))
+    # @commands.command()
+    # async def echo(self, ctx, *args):
+    #     """Takes in space separated arguments and outputs those same arguments"""
+    #     # Uses join command to space separate args, no matter how many there are
+    #     await ctx.send(" ".join(args))
 
     @commands.command()
     async def help(self, ctx):

@@ -1,6 +1,8 @@
 # Configuration file
 
 config.json
+config.json.backup
+tags
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
