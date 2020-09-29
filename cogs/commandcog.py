@@ -8,7 +8,7 @@ class CommandCog(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.has_role("Admin")
+    @commands.has_role("Bot Commander")
     async def setcommand(self, ctx, name, *args):
         """Adds a custom command with the first word as command and rest as response"""
 
@@ -24,7 +24,7 @@ class CommandCog(commands.Cog):
         await ctx.send(f"Command {name} updated!")
 
     @commands.command()
-    @commands.has_role("Admin")
+    @commands.has_role("Bot Commander")
     async def removecommand(self, ctx, name):
         """Removes a custom command with the given name"""
 
