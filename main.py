@@ -18,6 +18,7 @@ bot = commands.Bot(command_prefix="!", help_command=None)
 
 features = [
     "api",
+    "core",
     "tictactoe",
     "connectfour",
     "role",
@@ -30,6 +31,7 @@ features = [
     "codeexecution",
     "latex",
     "google",
+    "log",
 ]
 
 # Load extensions specified in features
