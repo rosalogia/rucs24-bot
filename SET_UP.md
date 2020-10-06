@@ -49,7 +49,7 @@ Note that depending on your distribution, the Python command in your path may po
 
 ## Text Editor
 
-**IMPORTANT**: Read the [Note on Privacy & Visual Studio Codium](#note-on-privacy-and-visual-studio-codium) before choosing to install Visual Studio Code.
+**IMPORTANT**: Read the [Note on Privacy & VSCodium](#note-on-privacy-and-vscodium) before choosing to install Visual Studio Code.
 
 There is no text editor that is decidedly or objectively the best for your or our purposes. We can only make a recommendation based on what's currently viable, popular, convenient and user-friendly. As you become a more experienced programmer, consider taking the time to familiarise yourself and experiment with various tools for programmers and carefully weigh and evaluate them to choose which one works best for you.
 
@@ -101,13 +101,13 @@ To test that it is properly working, try creating a comment like this in your co
 
 Then save your file. You should see a squiggle appear under your comment, and hovering over it should display a window describing the problem.
 
-### Note on Privacy and Visual Studio Codium
+### Note on Privacy and VSCodium
 
 Visual Studio Code is an open source text editor developed by Microsoft, however it is commonly known and acknowledged that the version of VS Code that is distributed on the link above includes software that collects and tracks information about your computer usage and sends it to Microsoft for analysis. This is known as "telemetry." Some users are, rightfully, uncomfortable with this and are unwilling to use a text editor that violates your privacy to the degree that VS Code does.
 
-However, this problem only exists with the version of VS Code that Microsoft distributes on their website. The problem can be circumvented entirely by downloading and compiling the VS Code source-code. Compiling a large program from source can take a lot of time and can be confusing to new programmers, so a group of people have pre-compiled VS Code without the telemetry features, and are distributing it as [Visual Studio Codium](https://vscodium.com/).
+However, this problem only exists with the version of VS Code that Microsoft distributes on their website. The problem can be circumvented entirely by downloading and compiling the VS Code source-code. Compiling a large program from source can take a lot of time and can be confusing to new programmers, so a group of people have pre-compiled VS Code without the telemetry features, and are distributing it as [VSCodium](https://vscodium.com/).
 
-There are no downsides to using this version of VS Code, and it is recommended that you do if you care about your privacy and are uncomfortable with a large corporation receiving data about how you use your computer and its tools. The link above includes more information on the Codium project as well as installation instructions for various operating systems.
+There are no downsides to using this version of VS Code, and it is recommended that you do if you care about your privacy and are uncomfortable with a large corporation receiving data about how you use your computer and its tools. The link above includes more information on the VSCodium project as well as installation instructions for various operating systems.
 
 ## Installing and Using Git
 
