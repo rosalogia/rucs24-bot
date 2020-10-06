@@ -16,23 +16,23 @@ class LogCog(commands.Cog):
             await ctx.send("Invalid channel!")
             return
 
-        with open("data/logchannel.json", "r") as f:
-            logchannel_dict = json.load(f)
-            logchannel_dict["logChannel"] = channel_id
+        with open("config.json", "r") as f:
+            config_dict = json.load(f)
+            config_dict["logChannel"] = channel_id
 
-        with open("data/logchannel.json", "w") as f:
-            json.dump(logchannel_dict, f)
+        with open("config.json", "w") as f:
+            json.dump(config_dict, f)
 
-        await ctx.send("Log channel updated to " + channel_obj.name)
+        await ctx.send(f"Log channel updated to {channel_obj.name}")
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
         if message.author == self.bot.user:
             return
 
-        with open("data/logchannel.json", "r") as f:
-            logchannel_dict = json.load(f)
-            channel_id = logchannel_dict["logChannel"]
+        with open("config.json", "r") as f:
+            config_dict = json.load(f)
+            channel_id = config_dict["logChannel"]
             channel_obj = await self.bot.fetch_channel(channel_id)
 
         embed = discord.Embed(
