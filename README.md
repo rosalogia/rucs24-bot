@@ -39,3 +39,4 @@ in `main.py`. Here are the presently available features:
 * "joke": The bot tells a user a joke when a command is called
 * "minecraft": Allows the user to whitelist themselves in a minecraft server by registering their username with the bot
 * "fun": Provides arbitrary and entertaining commands
+* "covid + {state}": Returns the confirmed, death, and test covid count for the state
