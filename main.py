@@ -32,6 +32,7 @@ features = [
     "latex",
     "google",
     "log",
+    "affirmation",
 ]
 
 # Load extensions specified in features
