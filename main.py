@@ -1,5 +1,6 @@
 from configuration import config
 from discord.ext import commands
+from datetime import datetime
 
 
 class bcolors:
@@ -40,8 +41,12 @@ features = [
 for feature in features:
     try:
         bot.load_extension(f"cogs.{feature}cog")
-    except Exception:
+    except Exception as e:
         print(f"{bcolors.FAIL}WARN: Cog {feature} failed to load{bcolors.ENDC}")
+        with open("log.txt", "a") as log_file:
+            current_time = datetime.now().strftime("%H:%M:%S")
+            msg = f"[{current_time}] in cog {feature}:\n{e}\n\n"
+            log_file.write(msg)
 
 # Run the bot using the token in config.json
 bot.run(config["botToken"])
