@@ -32,6 +32,7 @@ features = [
     "latex",
     "google",
     "log",
+    "covid",
     "affirmation",
 ]
 
