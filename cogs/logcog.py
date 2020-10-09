@@ -114,5 +114,6 @@ class LogCog(commands.Cog):
         await log_channel.send(embed=embed)
 
 
+
 def setup(bot):
     bot.add_cog(LogCog(bot))

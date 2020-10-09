@@ -43,6 +43,19 @@ class CommandCog(commands.Cog):
 
         await ctx.send(f"There is now no command for {name}")
 
+    @commands.command()
+    async def listcommands(self, ctx):
+        """Lists custom commands"""
+
+        with open("data/commands.json", "r") as f:
+            commands = json.load(f)
+
+        desc = "\n".join([k for k in commands.keys()])
+
+        embed = discord.Embed(title="Custom Commands", description=desc, color=0xFF0000)
+
+        await ctx.send(embed=embed)
+
     @commands.Cog.listener()
     async def on_message(self, msg):
         """Check for custom commands on every message"""

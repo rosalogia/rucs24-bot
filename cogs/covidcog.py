@@ -5,7 +5,7 @@ import requests
 
 def embedCreator(data):
     """
-        Creates the embedded message for the covid-19 stats
+    Creates the embedded message for the covid-19 stats
     """
     state = data["state"]
     embed_title = f":world_map: Covid Stats in {state} :world_map:"
@@ -13,16 +13,19 @@ def embedCreator(data):
     embed.description = f"Statistics for Covid-19 in {state}"
     embed.add_field(
         name=f"Total {state} Cases",
-        value="Total Cases: {:,}".format(data['cases']),
-        inline=True)
+        value="Total Cases: {:,}".format(data["cases"]),
+        inline=True,
+    )
     embed.add_field(
         name=f"Total {state} Deaths",
-        value="Total Deaths: {:,}".format(data['deaths']),
-        inline=True)
+        value="Total Deaths: {:,}".format(data["deaths"]),
+        inline=True,
+    )
     embed.add_field(
         name=f"Total {state} Cases",
-        value="Total Tests: {:,}".format(data['tests']),
-        inline=True)
+        value="Total Tests: {:,}".format(data["tests"]),
+        inline=True,
+    )
     embed.set_footer(text="Data from corona.lmao.ninja")
     return embed
 
@@ -40,7 +43,11 @@ class CovidCog(commands.Cog):
         api_data = requests.get("https://corona.lmao.ninja/v2/states").json()
 
         try:
-            returning_data, *_ = [state_data for state_data in api_data if state_data["state"] == state_name]
+            returning_data, *_ = [
+                state_data
+                for state_data in api_data
+                if state_data["state"] == state_name
+            ]
         except ValueError:
             await ctx.send("State not found")
             return
