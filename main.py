@@ -35,7 +35,8 @@ features = [
     "log",
     "covid",
     "affirmation",
-    "command",
+    "resource",
+    "command"
 ]
 
 # Load extensions specified in features
