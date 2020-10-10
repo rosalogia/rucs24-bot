@@ -14,7 +14,7 @@ assignees: ''
 
 ### Describe how it should work
 
-Clear and concise description of how you expect the feature to behave, not necessarily how the feature should be deisgned
+Clear and concise description of how you expect the feature to behave, not necessarily how the feature should be designed
 
 #### [Optionally] Describe a potential solution
 
