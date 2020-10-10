@@ -1,0 +1,14 @@
+{
+    "botToken": YOUR_TOKEN,
+    "features":
+    [
+        "react",
+        "joke",
+        "fun",
+        "codeexecution",
+        "latex",
+        "google",
+        "covid",
+        "affirmation"
+    ]
+}

@@ -1,7 +1,9 @@
 import json
 from discord.ext import commands
 from datetime import datetime
+from cogs.utils import get_config
 
+config = get_config()
 
 class bcolors:
     HEADER = "\033[95m"
@@ -17,30 +19,10 @@ class bcolors:
 # Initialize bot with prefix '!'
 bot = commands.Bot(command_prefix="!", help_command=None)
 
-features = [
-    "api",
-    "core",
-    "tictactoe",
-    "connectfour",
-    "role",
-    "github",
-    "exp",
-    "react",
-    "joke",
-    "minecraft",
-    "fun",
-    "codeexecution",
-    "latex",
-    "google",
-    "log",
-    "covid",
-    "affirmation",
-    "resource",
-    "command"
-]
+bot.load_extension("cogs.corecog")
 
 # Load extensions specified in features
-for feature in features:
+for feature in config["features"]:
     try:
         bot.load_extension(f"cogs.{feature}cog")
     except Exception as e:
@@ -51,6 +33,4 @@ for feature in features:
             log_file.write(msg)
 
 # Run the bot using the token in config.json
-with open("config.json") as config_file:
-    config = json.load(config_file)
-    bot.run(config["botToken"])
+bot.run(config["botToken"])
