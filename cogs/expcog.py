@@ -5,40 +5,41 @@ import json
 from datetime import datetime, timedelta
 from functools import reduce
 from math import floor, sqrt
-
-
-def level(exp):
-    """A user's contributor level as a function of their exp"""
-    return floor((sqrt(625 + 20 * exp) - 25) / 10)
-
-
-def exp(level):
-    """The amount of EXP required to achieve a certain level"""
-    return 5 * level * (level + 5)
+from .utils import create_ine, get_config, update_config
 
 
 class ExpCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        with open("config.json", "r") as config_file:
-            # Only load configuration that has to do with this cog
-            self.config = json.load(config_file)["github"]
-            self.github_session = Github(self.config["user"], self.config["password"])
 
-            # If we ever have more than one RUCS24
-            # repository, we can store them all
-            # in a list, and we'll get exp no
-            # matter which one we're contributing to
-            self.repositories = [
-                self.github_session.get_repo(repo)
-                for repo in self.config["repositories"]
-            ]
+        create_ine("data/contribution_exp.json")
+        create_ine("data/github_registrations.json")
 
-            self.reward_roles = self.config["reward_roles"]
+        # Only load configuration that has to do with this cog
+        self.config = get_config()["github"]
+        self.github_session = Github(self.config["user"], self.config["password"])
+
+        # If we ever have more than one RUCS24
+        # repository, we can store them all
+        # in a list, and we'll get exp no
+        # matter which one we're contributing to
+        self.repositories = [
+            self.github_session.get_repo(repo) for repo in self.config["repositories"]
+        ]
+
+        self.reward_roles = self.config["reward_roles"]
 
         self.event_cache = []
 
         self.update.start()
+
+    def level(self, exp):
+        """A user's contributor level as a function of their exp"""
+        return floor((sqrt(625 + 20 * exp) - 25) / 10)
+
+    def exp(self, level):
+        """The amount of EXP required to achieve a certain level"""
+        return 5 * level * (level + 5)
 
     async def award_roles(self, guild_id, user_id):
         """Give the specified reward roles to the user
@@ -71,7 +72,7 @@ class ExpCog(commands.Cog):
             for role_level in level_requirements:
                 role_object = current_guild.get_role(self.reward_roles[role_level])
                 if (
-                    level(contribution_exp[user_id]) >= int(role_level)
+                    self.level(contribution_exp[user_id]) >= int(role_level)
                     and not role_assigned
                 ):
                     if role_object in member.roles:
@@ -128,13 +129,15 @@ class ExpCog(commands.Cog):
             value=f"[{author_login}](https://github.com/{author_login})",
             inline=True,
         )
-        stats_embed.add_field(name="Level", value=f"{level(author_exp)}", inline=True)
+        stats_embed.add_field(
+            name="Level", value=f"{self.level(author_exp)}", inline=True
+        )
         stats_embed.add_field(
             name="Current EXP", value=str(floor(author_exp)), inline=True
         )
         stats_embed.add_field(
             name="EXP till Next Level",
-            value=str(floor(exp(level(author_exp) + 1) - author_exp)),
+            value=str(floor(self.exp(self.level(author_exp) + 1) - author_exp)),
             inline=True,
         )
 
@@ -266,10 +269,10 @@ class ExpCog(commands.Cog):
                 json.dump(contribution_exp, contribution_exp_file)
 
             if update_channel:
-                current_level = level(contribution_exp[user])
+                current_level = self.level(contribution_exp[user])
 
-                if level(contribution_exp[user] + gained_exp) > current_level:
-                    current_level = level(contribution_exp[user] + gained_exp)
+                if self.level(contribution_exp[user] + gained_exp) > current_level:
+                    current_level = self.level(contribution_exp[user] + gained_exp)
 
                     await update_channel.send(
                         f"<@{user}> **has levelled up!**",

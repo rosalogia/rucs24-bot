@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import requests
 import json
+from .utils import create_ine, get_config, update_config
 
 
 class DuplicateError(Exception):
@@ -22,10 +23,12 @@ class InvalidError(Exception):
 class MinecraftCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        with open("config.json", "r") as config_file:
-            config = json.load(config_file)["minecraft"]
-            self.whitelist_path = config["whitelist_path"]
-            self.confirmation_channel_id = config["confirmation_channel_id"]
+
+        create_ine("data/mc_accountmap.json")
+
+        config = get_config()["minecraft"]
+        self.whitelist_path = config["whitelist_path"]
+        self.confirmation_channel_id = config["confirmation_channel_id"]
 
     def update_whitelist(self, username, isAddition=True):
         """Update the whitelist file with the given username

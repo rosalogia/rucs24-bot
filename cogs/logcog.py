@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 import json
 import requests
+from .utils import get_config, update_config
 
 
 class LogCog(commands.Cog):
@@ -9,23 +10,21 @@ class LogCog(commands.Cog):
         self.bot = bot
         self.image_cache = {}
 
-        with open("config.json", "r") as f:
-            config_dict = json.load(f)
-            try:
-                self.log_channel_id = config_dict["logChannel"]
-            except KeyError:
-                self.log_channel_id = None
-                print(
-                    "Remember to either disable the log cog or",
-                    "set a log channel with !setlogchannel <channel id>"
-                )
+        config_dict = get_config()
+        try:
+            self.log_channel_id = config_dict["logChannel"]
+        except KeyError:
+            self.log_channel_id = None
+            print(
+                "Remember to either disable the log cog or",
+                "set a log channel with !setlogchannel <channel id>",
+            )
 
-        with open("config.json", "r") as f:
-            config_dict = json.load(f)
-            try:
-                self.imgur_client_id = config_dict["imgurClientId"]
-            except KeyError:
-                print("No imgur client id found. Images won't be logged.")
+        config_dict = get_config()
+        try:
+            self.imgur_client_id = config_dict["imgurClientId"]
+        except KeyError:
+            print("No imgur client id found. Images won't be logged.")
 
     @commands.command()
     @commands.has_role("Bot Commander")
@@ -37,12 +36,9 @@ class LogCog(commands.Cog):
             await ctx.send("Invalid channel!")
             return
 
-        with open("config.json", "r") as f:
-            config_dict = json.load(f)
-            config_dict["logChannel"] = channel_id
-
-        with open("config.json", "w") as f:
-            json.dump(config_dict, f)
+        config_dict = get_config()
+        config_dict["logChannel"] = channel_id
+        update_config(config_dict)
 
         self.log_channel_id = channel_id
         await ctx.send(f"Log channel updated to {log_channel.name}")
@@ -55,9 +51,7 @@ class LogCog(commands.Cog):
             payload = {"image": attachment.url}
 
             imgur_request = requests.post(
-                "https://api.imgur.com/3/image",
-                headers=headers,
-                data=payload
+                "https://api.imgur.com/3/image", headers=headers, data=payload
             )
 
             self.image_cache[message.id] = imgur_request.json()["data"]["link"]
@@ -72,7 +66,7 @@ class LogCog(commands.Cog):
         embed = discord.Embed(
             title="Message Deletion",
             description=f"{message.author.name} in <#{message.channel.id}>",
-            color=0xFF0000
+            color=0xFF0000,
         )
 
         embed.add_field(
@@ -83,9 +77,7 @@ class LogCog(commands.Cog):
 
         if message.id in self.image_cache.keys():
             embed.add_field(
-                name="Attached Image",
-                value=self.image_cache[message.id],
-                inline=False
+                name="Attached Image", value=self.image_cache[message.id], inline=False
             )
 
         embed.set_thumbnail(url=str(message.author.avatar_url))
@@ -105,14 +97,13 @@ class LogCog(commands.Cog):
         embed = discord.Embed(
             title="Message Edit",
             description=f"{message_before.author.name} in <#{message_before.channel.id}>",
-            color=0xFF0000
+            color=0xFF0000,
         )
         embed.add_field(name="Before", value=message_before.content, inline=False)
         embed.add_field(name="After", value=message_after.content, inline=True)
         embed.set_thumbnail(url=str(message_before.author.avatar_url))
 
         await log_channel.send(embed=embed)
-
 
 
 def setup(bot):

@@ -3,69 +3,70 @@ import requests
 import polling
 from github import Github
 import json
+from .utils import create_ine
 
-
-def request_codes():
-    """Request device and verification codes from the GitHub OAuth API
-
-    Returns:
-        dict: a JSON response containing both codes
-    """
-    return requests.post(
-        "https://github.com/login/device/code",
-        # Only request permission to read user information
-        {"client_id": "45e2376f056230c072a5", "scope": "read:user"},
-        headers={"Accept": "application/json"},
-    ).json()
-
-
-def poll_for_token(codes):
-    """Poll the OAuth API for an access token
-    Args:
-        codes (dict): the JSON response from the API call
-                      containing the device and verification codes
-
-    Returns:
-        dict:   the JSON response from the API that contains
-                either the access_token or an error message
-    """
-
-    req = requests.post(
-        "https://github.com/login/oauth/access_token",
-        {
-            "client_id": "45e2376f056230c072a5",
-            "device_code": codes["device_code"],
-            "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
-        },
-        headers={"Accept": "application/json"},
-    )
-    try:
-        if req.json()["error"] == "authorization_pending":
-            return None
-        else:
-            return req.json()
-    except KeyError:
-        return req.json()
-
-
-# Load the registration data ahead of time
-with open("data/github_registrations.json", "r") as registration_file:
-    registrations = json.load(registration_file)
-
-with open("data/contribution_exp.json", "r") as contribution_exp_file:
-    contribution_exp = json.load(contribution_exp_file)
+create_ine("data/github_registrations.json")
+create_ine("data/contribution_exp.json")
 
 
 class GithubCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+        # Load the registration data ahead of time
+        with open("data/github_registrations.json", "r") as registration_file:
+            self.registrations = json.load(registration_file)
+
+        with open("data/contribution_exp.json", "r") as contribution_exp_file:
+            self.contribution_exp = json.load(contribution_exp_file)
+
+    def request_codes(self):
+        """Request device and verification codes from the GitHub OAuth API
+
+        Returns:
+            dict: a JSON response containing both codes
+        """
+        return requests.post(
+            "https://github.com/login/device/code",
+            # Only request permission to read user information
+            {"client_id": "45e2376f056230c072a5", "scope": "read:user"},
+            headers={"Accept": "application/json"},
+        ).json()
+
+    def poll_for_token(self, codes):
+        """Poll the OAuth API for an access token
+        Args:
+            codes (dict): the JSON response from the API call
+                          containing the device and verification codes
+
+        Returns:
+            dict:   the JSON response from the API that contains
+                    either the access_token or an error message
+        """
+
+        req = requests.post(
+            "https://github.com/login/oauth/access_token",
+            {
+                "client_id": "45e2376f056230c072a5",
+                "device_code": codes["device_code"],
+                "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
+            },
+            headers={"Accept": "application/json"},
+        )
+        try:
+            if req.json()["error"] == "authorization_pending":
+                return None
+            else:
+                return req.json()
+        except KeyError:
+            return req.json()
+
     @commands.command()
     async def register(self, ctx):
         """DMs the user with instructions for registering
         their GitHub account with the bot"""
 
-        code_response = request_codes()
+        code_response = self.request_codes()
         await ctx.author.send(
             "To register your GitHub account with RUCS24-Bot, "
             "go to <https://github.com/login/device> and enter "
@@ -74,7 +75,7 @@ class GithubCog(commands.Cog):
 
         try:
             token_response = polling.poll(
-                lambda: poll_for_token(code_response), step=10, timeout=60
+                lambda: self.poll_for_token(code_response), step=10, timeout=60
             )
         except polling.TimeoutException:
             await ctx.author.send("Timed out. Please try the !register command again.")
@@ -92,12 +93,12 @@ class GithubCog(commands.Cog):
             )
 
             with open("data/github_registrations.json", "w+") as registration_file:
-                registrations[str(ctx.author.id)] = auth_session.get_user().login
-                json.dump(registrations, registration_file)
+                self.registrations[str(ctx.author.id)] = auth_session.get_user().login
+                json.dump(self.registrations, registration_file)
 
             with open("data/contribution_exp.json", "w+") as contribution_exp_file:
-                contribution_exp[str(ctx.author.id)] = 0
-                json.dump(contribution_exp, contribution_exp_file)
+                self.contribution_exp[str(ctx.author.id)] = 0
+                json.dump(self.contribution_exp, contribution_exp_file)
 
         except KeyError:
             print(f"Error dump: {token_response}")
@@ -112,10 +113,10 @@ class GithubCog(commands.Cog):
         the user's GitHub account is registered with the bot"""
 
         with open("data/github_registrations.json", "r") as registration_file:
-            registrations = json.load(registration_file)
+            self.registrations = json.load(registration_file)
             await ctx.send(
                 "You are currently registered on GitHub as "
-                f"**{registrations[str(ctx.author.id)]}**.\n"
+                f"**{self.registrations[str(ctx.author.id)]}**.\n"
                 "If this is not or is no longer your GitHub username, "
                 "!unregister and !register again."
             )
@@ -127,7 +128,7 @@ class GithubCog(commands.Cog):
 
         with open("data/github_registrations.json", "w+") as registration_file:
             try:
-                del registrations[str(ctx.author.id)]
+                del self.registrations[str(ctx.author.id)]
                 await ctx.send(
                     "Your GitHub login has been removed from our server. "
                     "Complete the process by navigating to the following page:\n\n"
@@ -138,7 +139,7 @@ class GithubCog(commands.Cog):
                 await ctx.send(
                     "You have not registered your GitHub account with RUCS24."
                 )
-            json.dump(registrations, registration_file)
+            json.dump(self.registrations, registration_file)
 
 
 def setup(bot):

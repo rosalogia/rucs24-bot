@@ -4,6 +4,7 @@ config.json
 config.json.backup
 tags
 data/
+log.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

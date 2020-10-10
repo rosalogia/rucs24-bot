@@ -1,11 +1,13 @@
 import discord
 from discord.ext import commands
 import json
+from .utils import create_ine
 
 
 class CommandCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        create_ine("data/commands.json")
 
     @commands.command()
     @commands.has_role("Bot Commander")

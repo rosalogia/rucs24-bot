@@ -1,4 +1,4 @@
-from configuration import config
+import json
 from discord.ext import commands
 from datetime import datetime
 
@@ -51,4 +51,6 @@ for feature in features:
             log_file.write(msg)
 
 # Run the bot using the token in config.json
-bot.run(config["botToken"])
+with open("config.json") as config_file:
+    config = json.load(config_file)
+    bot.run(config["botToken"])

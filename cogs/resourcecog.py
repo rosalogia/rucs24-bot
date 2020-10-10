@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 import json
 from discord.utils import get
+from .utils import create_ine, get_config, update_config
 
 
 def save_resources(resource_dict):
@@ -10,15 +11,8 @@ def save_resources(resource_dict):
 
 
 def load_resources():
-    try:
-        with open("data/resources.json", "r") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        with open("data/resources.json", "w") as f:
-            f.write("{}")
-            f.close()
-        with open("data/resources.json", "r") as f:
-            return json.load(f)
+    with open("data/resources.json", "r") as f:
+        return json.load(f)
 
 
 def create_embed(msgauth, name, link, desc, tags):
@@ -63,18 +57,19 @@ class ResourceCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        with open("config.json", "r") as f:
-            cfg = json.load(f)
-            try:
-                self.resource_channel_id = cfg["resourceChannel"]
-            except KeyError:
-                self.resource_channel_id = None
-                print("Remember to !setresourcechannel")
-            try:
-                self.review_channel_id = cfg["reviewChannel"]
-            except KeyError:
-                self.review_channel_id = None
-                print("Remember to !setreviewchannel")
+        create_ine("data/resources.json")
+
+        cfg = get_config()
+        try:
+            self.resource_channel_id = cfg["resourceChannel"]
+        except KeyError:
+            self.resource_channel_id = None
+            print("Remember to !setresourcechannel")
+        try:
+            self.review_channel_id = cfg["reviewChannel"]
+        except KeyError:
+            self.review_channel_id = None
+            print("Remember to !setreviewchannel")
 
     @commands.command()
     @commands.has_role("Bot Commander")
@@ -86,12 +81,9 @@ class ResourceCog(commands.Cog):
             await ctx.send("Invalid channel id")
             return
 
-        with open("config.json", "r") as f:
-            cfg = json.load(f)
-            cfg["resourceChannel"] = channel_id
-
-        with open("config.json", "w") as f:
-            json.dump(cfg, f)
+        cfg = get_config()
+        cfg["resourceChannel"] = channel_id
+        update_config(cfg)
 
         self.resource_channel_id = channel_id
         await ctx.send(f"{rsc_channel.name} has been set as resources channel")
@@ -106,12 +98,9 @@ class ResourceCog(commands.Cog):
             await ctx.send("Invalid channel id")
             return
 
-        with open("config.json", "r") as f:
-            cfg = json.load(f)
-            cfg["reviewChannel"] = channel_id
-
-        with open("config.json", "w") as f:
-            json.dump(cfg, f)
+        cfg = get_config()
+        cfg["reviewChannel"] = channel_id
+        update_config(cfg)
 
         self.review_channel_id = channel_id
         await ctx.send(f"{rvw_channel.name} has been set as review channel")
