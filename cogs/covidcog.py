@@ -8,21 +8,29 @@ def embedCreator(data):
     Creates the embedded message for the covid-19 stats
     """
     state = data["state"]
+    todayCases = data["todayCases"]
+    todayDeaths = data["todayDeaths"]
     embed_title = f":world_map: Covid Stats in {state} :world_map:"
     embed = discord.Embed(title=embed_title, color=0x8D0000)
     embed.description = f"Statistics for Covid-19 in {state}"
     embed.add_field(
         name=f"Total {state} Cases",
-        value="Total Cases: {:,}".format(data["cases"]),
+        value="Total Cases: {:,} {}".format(
+            data["cases"],
+            f"(+{todayCases})" if todayCases != 0 else ""
+            ),
         inline=True,
     )
     embed.add_field(
         name=f"Total {state} Deaths",
-        value="Total Deaths: {:,}".format(data["deaths"]),
+        value="Total Deaths: {:,} {}".format(
+            data["deaths"],
+            f"(+{todayDeaths})" if todayDeaths != 0 else ""
+            ),
         inline=True,
     )
     embed.add_field(
-        name=f"Total {state} Cases",
+        name=f"Total {state} Tests",
         value="Total Tests: {:,}".format(data["tests"]),
         inline=True,
     )
