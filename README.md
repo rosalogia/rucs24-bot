@@ -40,3 +40,4 @@ in `config.json`. Here are the presently available features:
 * "latex": Provides commands for generating and sending images of compiled LaTeX code to the chat
 * "log": Provides functionality for the logging of deleted or edited messages and images
 * "covid": Returns the confirmed, death, and test covid count for the state
+* "whois": Provides details about a user by mentioning them
