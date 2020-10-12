@@ -12,8 +12,9 @@ class TranslateCog(commands.Cog):
     @commands.command()
     async def translate(self, ctx, lang_from, lang_to, *args):
         """Input a 2 letter code for lang_from and lang_to, and then the text to be translated"""
-        input_str = urllib.parse.quote(" ".join(args), safe="")
-        url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl={lang_from}&tl={lang_to}&dt=t&q={input_str}"
+        input_str = " ".join(args)
+        safe_input_str = urllib.parse.quote(input_str, safe='')
+        url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl={lang_from}&tl={lang_to}&dt=t&q={safe_input_str}"
         req = requests.get(url)
         try:
             translated_text = req.json()[0][0][0]
