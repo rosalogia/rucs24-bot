@@ -117,6 +117,7 @@ class ResourceCog(commands.Cog):
         await message.add_reaction("✔️")
         await message.add_reaction("❎")
         resource_dict = load_resources()
+        await ctx.message.add_reaction("✔️")
 
         resource_dict[str(message.id)] = {}
         rinfo = resource_dict[str(message.id)]
@@ -125,7 +126,6 @@ class ResourceCog(commands.Cog):
         rinfo["desc"] = rscdesc
         rinfo["tags"] = rsctags
         rinfo["msgauth"] = str(ctx.message.author.name)
-
         save_resources(resource_dict)
 
     @commands.command()
