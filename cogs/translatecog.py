@@ -26,7 +26,6 @@ class TranslateCog(commands.Cog):
         )
         embed.add_field(name="Input Text", value=input_str)
         embed.add_field(name="Output Text", value=translated_text, inline=False)
-        embed.add
         await ctx.send(embed=embed)
 
 
