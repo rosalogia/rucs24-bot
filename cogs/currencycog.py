@@ -8,21 +8,24 @@ class CurrencyCog(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def cconvert(self, ctx, *args):
+    async def cconvert(self, ctx, base, target, amount: float = 1):
         """Converts between currencies"""
 
-        # To do:
-        # 1. make it output a fancy embed thing
-        # 2. round the output (number of decimal places differs by currency)
+        # To do: round the output (number of decimal places differs by currency)
 
         try:
-            initial_value = float(args[2]) if len(args) > 2 else 1
-            payload = {"symbols": args[1], "base": args[0]}
-            r = requests.get("https://api.exchangeratesapi.io/latest", params=payload)
+            payload = {"symbols": target, "base": base}
+            r = requests.get(
+                "https://api.exchangeratesapi.io/latest", params=payload)
             apidata = r.json()
-            await ctx.send(float(apidata["rates"][args[1]])*initial_value)
-        except IndexError:
-            await ctx.send("Invalid syntax")
+            result = float(apidata["rates"][target])*amount
+
+            embed = discord.Embed(title="Currency Conversion")
+            embed.add_field(name=f"From {base}:", value=f"```{amount}```")
+            embed.add_field(name=f"To {target}:", value=f"```{result}```")
+            embed.set_footer(text="Powered by https://exchangeratesapi.io/")
+
+            await ctx.send(embed=embed)
         except KeyError:
             await ctx.send("Invalid currency code(s)")
 
