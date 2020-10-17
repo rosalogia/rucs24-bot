@@ -15,7 +15,7 @@ class WhoisCog(commands.Cog):
         if not member:
             member = ctx.message.author
         embed = discord.Embed(
-            title="User Info - " + str(member),
+            title=f"User Info - {member}",
             color=member.color,
         )
         eastern = pytz.timezone("US/Eastern")
