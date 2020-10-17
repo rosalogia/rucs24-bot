@@ -1,4 +1,5 @@
 import discord
+import pytz
 from discord.ext import commands
 from datetime import datetime, timezone
 
@@ -8,18 +9,24 @@ class WhoisCog(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def whois(self, ctx, member: discord.Member):
+    async def whois(self, ctx, member: discord.Member = None):
         """Provides details about a user by mentioning them"""
 
+        if not member:
+            member = ctx.message.author
         embed = discord.Embed(
-            title="User Info - " + member.display_name, color=member.color
+            title=f"User Info - {member}",
+            color=member.color,
         )
-        current_time = datetime.now().strftime("Today at %I:%M %p")
+        eastern = pytz.timezone("US/Eastern")
+        east_time = datetime.now(eastern)
+        current_time = east_time.strftime("%I:%M %p")
         roles = member.roles
+        roles.reverse()
 
         embed.set_thumbnail(url=member.avatar_url)
         embed.set_footer(
-            text=f"Requested by {ctx.author} at {current_time}",
+            text=f"Requested by {member} | {current_time}",
             icon_url=ctx.author.avatar_url,
         )
 
