@@ -15,7 +15,7 @@ class WhoisCog(commands.Cog):
         if not member:
             member = ctx.message.author
         embed = discord.Embed(
-            title="User Info - " + member.name + "#" + member.discriminator,
+            title="User Info - " + str(member),
             color=member.color,
         )
         eastern = pytz.timezone("US/Eastern")
@@ -26,7 +26,7 @@ class WhoisCog(commands.Cog):
 
         embed.set_thumbnail(url=member.avatar_url)
         embed.set_footer(
-            text="Requested by {0} | {1}".format(ctx.author, current_time),
+            text=f"Requested by {member} | {current_time}",
             icon_url=ctx.author.avatar_url,
         )
 
