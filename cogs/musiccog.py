@@ -3,7 +3,8 @@ import os
 from discord.ext import commands
 from discord.utils import get
 import youtube_dl
-from .utils import get_config
+from youtube_search import YoutubeSearch
+import validators
 
 class MusicCog(commands.Cog):
     def __init__(self, bot):
@@ -42,6 +43,9 @@ class MusicCog(commands.Cog):
 
     @commands.command(pass_context=True, aliases=["p", "pl"])
     async def play(self, ctx, url: str):
+        if not validators.url(url):
+            url = "https://youtube.com" + YoutubeSearch(url, max_results=1).videos[0]["url_suffix"]
+
         song_there = os.path.isfile("./data/song.mp3")
         try:
             if song_there:
