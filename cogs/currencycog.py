@@ -15,10 +15,9 @@ class CurrencyCog(commands.Cog):
 
         try:
             payload = {"symbols": target, "base": base}
-            r = requests.get(
-                "https://api.exchangeratesapi.io/latest", params=payload)
+            r = requests.get("https://api.exchangeratesapi.io/latest", params=payload)
             apidata = r.json()
-            result = float(apidata["rates"][target])*amount
+            result = float(apidata["rates"][target]) * amount
 
             embed = discord.Embed(title="Currency Conversion")
             embed.add_field(name=f"From {base}:", value=f"```{amount}```")

@@ -16,17 +16,15 @@ def embedCreator(data):
     embed.add_field(
         name=f"Total {state} Cases",
         value="Total Cases: {:,} {}".format(
-            data["cases"],
-            f"(+{todayCases})" if todayCases != 0 else ""
-            ),
+            data["cases"], f"(+{todayCases})" if todayCases != 0 else ""
+        ),
         inline=True,
     )
     embed.add_field(
         name=f"Total {state} Deaths",
         value="Total Deaths: {:,} {}".format(
-            data["deaths"],
-            f"(+{todayDeaths})" if todayDeaths != 0 else ""
-            ),
+            data["deaths"], f"(+{todayDeaths})" if todayDeaths != 0 else ""
+        ),
         inline=True,
     )
     embed.add_field(
