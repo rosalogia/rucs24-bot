@@ -28,7 +28,7 @@ class MusicCog(commands.Cog):
             await voice.move_to(channel)
         else:
             voice = await channel.connect()
-            print(f"The bot has connected to {channel}\n")
+
 
     @commands.command(pass_context=True, aliases=["L", "le"])
     async def leave(self, ctx):
@@ -46,8 +46,6 @@ class MusicCog(commands.Cog):
         try:
             if song_there:
                 os.remove("./data/song.mp3")
-                print("Removed old song file")
-
         except PermissionError:
             print(
                 "Error: unable to remove old song file. Do you have permission to do this?"
@@ -70,16 +68,16 @@ class MusicCog(commands.Cog):
         }
 
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            print("Downloading Audio\n")
             ydl.download([url])
 
         for file in os.listdir("./data/"):
             if file.endswith("mp3"):
-                name, *_ = file.split(".")
+                name = " ".join(file.split(".")[:-1])
+                await self.bot.change_presence(activity=discord.Activity(name=name, type=discord.ActivityType.listening))
                 os.rename(f"./data/{file}", "song.mp3")
 
         voice.play(discord.FFmpegPCMAudio("song.mp3"))
-        voice.source = discord.PCVolumeTransformer(voice.source)
+        voice.source = discord.PCMVolumeTransformer(voice.source)
         voice.source.volume = 0.07
 
         await ctx.send(f"Playing: {name}")
