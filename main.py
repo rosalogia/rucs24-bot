@@ -5,6 +5,7 @@ from cogs.utils import get_config
 
 config = get_config()
 
+
 class bcolors:
     HEADER = "\033[95m"
     OKBLUE = "\033[94m"

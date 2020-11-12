@@ -1,5 +1,6 @@
 import os
 import json
+from contextlib import contextmanager
 
 
 def create_ine(path):
@@ -16,6 +17,28 @@ def create_ine(path):
     if not os.path.exists(path):
         with open(path, "w") as f:
             f.write("{}")
+
+
+def get_data(fname):
+    with open(f"./data/{fname}.json", "r") as f:
+        return json.load(f)
+
+
+def update_data(fname, data):
+    with open(f"./data/{fname}.json", "w") as f:
+        json.dump(data, f)
+
+
+@contextmanager
+def get_data(fname, update=True):
+    with open(f"./data/{fname}.json", "r") as f:
+        data = json.load(f)
+
+    try:
+        yield data
+    finally:
+        if update:
+            update_data(fname, data)
 
 
 def get_config():
