@@ -26,7 +26,7 @@ class WhoisCog(commands.Cog):
 
         embed.set_thumbnail(url=member.avatar_url)
         embed.set_footer(
-            text=f"Requested by {member} | {current_time}",
+            text=f"Requested by {ctx.message.author} | {current_time}",
             icon_url=ctx.author.avatar_url,
         )
 
