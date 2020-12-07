@@ -1,5 +1,6 @@
 import json
 from discord.ext import commands
+from discord import Intents
 from datetime import datetime
 from cogs.utils import get_config
 
@@ -18,7 +19,7 @@ class bcolors:
 
 
 # Initialize bot with prefix '!'
-bot = commands.Bot(command_prefix="!", help_command=None)
+bot = commands.Bot(command_prefix="!", help_command=None, intents=Intents.all())
 
 bot.load_extension("cogs.corecog")
 
