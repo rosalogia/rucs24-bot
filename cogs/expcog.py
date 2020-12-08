@@ -17,7 +17,7 @@ class ExpCog(commands.Cog):
 
         # Only load configuration that has to do with this cog
         self.config = get_config()["github"]
-        self.github_session = Github(self.config["user"], self.config["password"])
+        self.github_session = Github(self.config["token"])
 
         # If we ever have more than one RUCS24
         # repository, we can store them all
